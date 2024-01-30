@@ -1,1 +1,30 @@
-<p>login works!</p>
+<!-- <form action="" method="post">
+    <input [ngModel]="name" (ngModelChange)="setUppercaseName($event)">
+    <br>
+    <input type="password" placeholder="user password">
+    <br>
+    <input type="submit">
+    {{name}}
+</form> -->
+{{error}}
+<br>
+<input [(ngModel)]="phone">
+<br>
+<input [(ngModel)]="password">
+<br>
+<p>Value: {{ phone }}</p>
+<p>Value: {{ password }}</p>
+<!-- <p>Valid: {{ ctrl.valid }}</p> -->
+
+<div *ngIf="isLoading; then thenBlock else elseBlock"></div>
+<ng-template #thenBlock>Loading...</ng-template>
+<ng-template #elseBlock>
+    <button (click)="login()">Login</button>
+</ng-template>
+
+
+<!-- <div>
+    <button type="button" (click)="dec()" title="smaller">-</button>
+    <button type="button" (click)="inc()" title="bigger">+</button>
+    <span [style.font-size.px]="size">FontSize: {{size}}px</span>
+  </div> -->
