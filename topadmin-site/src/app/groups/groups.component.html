@@ -1,6 +1,15 @@
-
-<ng-template ngFor let-item [ngForOf]="groups" let-c="index">
-    <a class="group">{{item.group_name}}</a>
-    
-
+<div *ngIf="isLoading; then thenBlock else elseBlock"></div>
+<ng-template #thenBlock>Loading...</ng-template>
+<ng-template #elseBlock>
+    <div *ngIf="status; then thenBlock else elseBlock"></div>
+    <ng-template #thenBlock>
+        <ng-template ngFor let-item [ngForOf]="groups" let-c="index">
+            <a class="group">{{item.group_name}}
+                {{item.group_created_at}}
+            </a>
+        </ng-template>
+    </ng-template>
+    <ng-template #elseBlock>
+        {{error}}
+    </ng-template>
 </ng-template>

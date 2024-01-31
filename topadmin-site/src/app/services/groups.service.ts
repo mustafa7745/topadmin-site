@@ -21,6 +21,6 @@ export class GroupsService {
 export interface Group {
   group_id: string;
   group_name: string;
-  group_created_at:string,
-  group_updated_at:string
+  group_created_at:Date,
+  group_updated_at:Date
 }

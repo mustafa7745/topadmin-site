@@ -11,7 +11,10 @@ import { CommonModule } from '@angular/common';
 })
 export class GroupsComponent {
 
-  groups: Group[] = []
+  groups: Group[] = [];
+  isLoading = true;
+  status = false;
+  error ='';
 
   constructor(
     private groupService: GroupsService,
@@ -23,16 +26,19 @@ export class GroupsComponent {
   ngOnInit() {
     this.groupService.read().subscribe({
       next: (response) => {
+        this.status = true;
         this.groups = response
         console.log(response);
 
       },
       error: (err) => {
-        alert(JSON.stringify(err))
+        this.error = err.error.message.ar
+        this.status = false;
+        this.isLoading = false;
       }
       ,
       complete: () => {
-
+        this.isLoading = false;
       }
     })
   }
