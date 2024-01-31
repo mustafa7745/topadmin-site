@@ -1,0 +1,11 @@
+.group{
+    display: block;
+    width: 100px;
+    background: antiquewhite;
+    height: 22px;
+    margin: 10px;
+    padding: 10px;
+    text-align: center;
+    border-radius: 10px;
+    cursor: pointer;
+}

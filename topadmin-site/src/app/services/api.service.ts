@@ -1,6 +1,8 @@
 import { isPlatformBrowser } from '@angular/common';
+import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { info } from 'console';
+import { Group } from './groups.service';
 
 @Injectable({
   providedIn: 'root'
@@ -8,7 +10,9 @@ import { info } from 'console';
 export class ApiService {
   formData: any;
   apiUrl = "http://localhost/onemegasoft1/api/"
-  constructor(@Inject(PLATFORM_ID) private _platformId: Object,) {
+  constructor(@Inject(PLATFORM_ID) private _platformId: Object,
+  public http:HttpClient
+  ) {
     var did: any;
     if (isPlatformBrowser(this._platformId)) {
       did = this.initDeviceId();
@@ -36,6 +40,13 @@ export class ApiService {
     } else {
       return localStorage.getItem(device_id)!;
     }
+  }
+
+  sendHttpPost(url:string,data:any){
+    return this.http.post<Group[]>(
+      this.apiUrl + url,
+      data
+    );
   }
 
   /**

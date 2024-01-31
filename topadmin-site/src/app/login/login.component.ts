@@ -42,7 +42,7 @@ export class LoginComponent {
     this.isLoading = true
     this.error = ''
 
-    this.loginService.checkUser('user/login.php',phone,password).subscribe({
+    this.loginService.checkUser(phone,password).subscribe({
       next:(response)=>{
         this.loginService.setLogin(phone,password)
         this.router.navigate(['/dashboard']);

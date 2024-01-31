@@ -1,2 +1,8 @@
-
-<h1 class="group" (click)="clickGroup()">groups</h1>
+<!-- <h1 class="group"> <a  routerLink="dashboard/groups" routerLinkActive="active" ></a>groups</h1> -->
+<nav>
+    <ul>
+        <li><a routerLink="/dashboard/groups" routerLinkActive="active" ariaCurrentWhenActive="page">Groups</a></li>
+        <li><a routerLink="/dashboard/apps" routerLinkActive="active" ariaCurrentWhenActive="page">Apps</a></li>
+    </ul>
+</nav>
+<router-outlet></router-outlet>

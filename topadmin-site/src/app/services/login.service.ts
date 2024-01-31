@@ -29,6 +29,11 @@ export class LoginService {
     }
     return '';
   }
+  getFormData(){
+    this.apiService.formData.append('user_phone', this.getPhone());
+    this.apiService.formData.append('user_password', this.getPassword());
+    return this.apiService.formData;
+  }
   constructor(
     @Inject(PLATFORM_ID) private _platformId: Object,
     private router: Router,
@@ -58,13 +63,10 @@ export class LoginService {
       localStorage.setItem(this.loginLocalstorage, JSON.stringify(data));
     }
   }
-  checkUser(url: string, phone: string, password: string): Observable<any> {
+  checkUser( phone: string, password: string): Observable<any> {
     this.apiService.formData.append('user_phone', phone);
     this.apiService.formData.append('user_password', password);
     //
-    return this.http.post(
-      this.apiService.apiUrl + url,
-      this.apiService.formData
-    );
+    return this.apiService.sendHttpPost('user/login.php',this.apiService.formData);
   }
 }
