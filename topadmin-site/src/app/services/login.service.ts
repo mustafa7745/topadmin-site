@@ -21,6 +21,7 @@ export class LoginService {
     }
     return '';
   }
+
   getPassword(): string {
     if (isPlatformBrowser(this._platformId)) {
       var data = localStorage.getItem(this.loginLocalstorage);

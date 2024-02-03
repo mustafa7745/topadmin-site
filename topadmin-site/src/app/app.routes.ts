@@ -16,7 +16,9 @@ export const routes: Routes = [
     component: DashboardComponent,
     children: [
       { path: 'groups', component: GroupsComponent },
-      { path: 'apps', component: AppsComponent }],
+      { path: 'apps/:id', component: AppsComponent },
+      { path: 'apps', component: AppsComponent },],
+      
   },
 
   { path: '**', component: NotFoundComponent },

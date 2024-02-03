@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { App, AppsService } from '../services/apps.service';
 import { CommonModule } from '@angular/common';
+import { ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-apps',
@@ -10,17 +11,26 @@ import { CommonModule } from '@angular/common';
   styleUrl: './apps.component.css'
 })
 export class AppsComponent {
+  @Input() id!:string;
   constructor(
+    private route:ActivatedRoute,
     private appsService:AppsService
   ){
 
   }
+
   apps: App[] = [];
   isLoading = true;
   status = false;
   error ='';
 
   ngOnInit() {
+    console.info("id:",this.id);
+    // var id = JSON.stringify()
+    if (this.id != undefined) {
+      this.appsService.addIdFormData(this.id)
+    }
+    
     this.appsService.read().subscribe({
       next: (response) => {
         this.status = true;
@@ -29,6 +39,8 @@ export class AppsComponent {
 
       },
       error: (err) => {
+        console.log(err);
+        
         this.error = err.error.message.ar
         this.status = false;
         this.isLoading = false;

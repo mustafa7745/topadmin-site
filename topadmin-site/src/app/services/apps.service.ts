@@ -8,13 +8,27 @@ import { LoginService } from './login.service';
 })
 export class AppsService {
 
+  id:any
+  formData : FormData = new FormData()
+
   constructor(
     private apiService:ApiService,
     private loginService:LoginService
-  ) { }
+  ) { 
+    this.formData = new FormData();
+    this.formData = this.loginService.getFormData()
+  }
 
   read(): Observable<App[]> {
-    return this.apiService.http.post<App[]>(this.apiService.apiUrl+'user/apps/read.php',this.loginService.getFormData())
+   
+    return this.apiService.http.post<App[]>(this.apiService.apiUrl+'user/apps/read.php',this.formData)
+  }
+  addIdFormData(id:string){
+    // console.log(this.formData);
+   
+    this.formData.append("id",'{"type":"group","id":"1"}')
+    console.log(this.formData.get("user_phone"));
+    console.log(this.formData.get("id"));
   }
 }
 export interface App {

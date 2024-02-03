@@ -1,5 +1,5 @@
 import { HttpClient } from '@angular/common/http';
-import { Component, Inject, PLATFORM_ID } from '@angular/core';
+import { Component, Inject, Input, OnInit, PLATFORM_ID } from '@angular/core';
 import { ApiService } from '../services/api.service';
 import { ActivatedRoute, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { LoginService } from '../services/login.service';
@@ -12,7 +12,7 @@ import { CommonModule } from '@angular/common';
   templateUrl: './dashboard.component.html',
   styleUrl: './dashboard.component.css',
 })
-export class DashboardComponent {
+export class DashboardComponent{
   phone: any;
   constructor(
     @Inject(PLATFORM_ID) private _platformId: Object,
@@ -25,11 +25,16 @@ export class DashboardComponent {
 
   ngOnInit() {
     this.check();
+
+      
+    
   }
+ 
   clickGroup(){
     // alert("groupp")
     this.router.navigate(['/dashboard/groups']);
   }
+  
 
   check() {
     if (this.loginService.isLogin()) {
