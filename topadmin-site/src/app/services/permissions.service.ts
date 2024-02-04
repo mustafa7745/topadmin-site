@@ -1,15 +1,16 @@
 import { Injectable } from '@angular/core';
-import { ApiService } from './api.service';
 import { Observable } from 'rxjs';
+import { ApiService } from './api.service';
+import { App } from './apps.service';
 import { LoginService } from './login.service';
 
 @Injectable({
   providedIn: 'root'
 })
-export class AppsService {
+export class PermissionsService {
 
   id:any
-  // 
+
   formData : FormData = new FormData()
 
   constructor(
@@ -20,8 +21,8 @@ export class AppsService {
     this.formData = this.loginService.getFormData()
   }
 
-  read(): Observable<App[]> {
-    return this.apiService.http.post<App[]>(this.apiService.apiUrl+'user/apps/read.php',this.formData)
+  read(): Observable<Permissions[]> {
+    return this.apiService.http.post<Permissions[]>(this.apiService.apiUrl+'user/permissions/read.php',this.formData)
   }
   addIdFormData(){
     // console.log(this.formData);
@@ -35,18 +36,9 @@ export class AppsService {
     this.id = undefined
   }
 }
-
-export interface App {
-  app_id:           string;
-  app_name:         string;
-  app_package_name: string;
-  app_sha256:       string;
-  app_icon:         string;
-  app_version:      string;
-  device_type_id:   string;
-  user_id:          string;
-  group_id:         string;
-  app_created_at:   Date;
-  app_updated_at:   Date;
+export interface Permissions {
+  permission_id: string;
+  permission_name: string;
+  permission_created_at: Date;
+  permission_updated_at: Date;
 }
-

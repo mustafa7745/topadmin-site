@@ -27,8 +27,8 @@ export class AppsComponent {
   ngOnInit() {
     console.info("id:",this.id);
     // var id = JSON.stringify()
-    if (this.id != undefined) {
-      this.appsService.addIdFormData(this.id)
+    if (this.appsService.id != undefined) {
+      this.appsService.addIdFormData()
     }
     
     this.appsService.read().subscribe({
@@ -44,10 +44,12 @@ export class AppsComponent {
         this.error = err.error.message.ar
         this.status = false;
         this.isLoading = false;
+        this.appsService.deleteId()
       }
       ,
       complete: () => {
         this.isLoading = false;
+        this.appsService.deleteId()
       }
     })
   }

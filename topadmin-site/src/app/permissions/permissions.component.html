@@ -1,0 +1,14 @@
+<div *ngIf="isLoading; then thenBlock else elseBlock"></div>
+<ng-template #thenBlock>Loading...</ng-template>
+<ng-template #elseBlock>
+    <div *ngIf="status; then thenBlock else elseBlock"></div>
+    <ng-template #thenBlock>
+        <ng-template ngFor let-item [ngForOf]="permissions" let-c="index">
+            <a class="group">{{item.permission_name}}
+            </a>
+        </ng-template>
+    </ng-template>
+    <ng-template #elseBlock>
+        {{error}}
+    </ng-template>
+</ng-template>

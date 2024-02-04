@@ -3,6 +3,7 @@ import { Group, GroupsService } from '../services/groups.service';
 import { CommonModule } from '@angular/common';
 import { AppsService } from '../services/apps.service';
 import { Router } from '@angular/router';
+import { PermissionsService } from '../services/permissions.service';
 
 
 @Component({
@@ -23,6 +24,7 @@ export class GroupsComponent {
     private router: Router,
     private appService: AppsService,
     private groupService: GroupsService,
+    private permissionsService:PermissionsService
 
   ) {
 
@@ -33,7 +35,17 @@ export class GroupsComponent {
     // console.log(id);
     // this.appService.addIdFormData(JSON.stringify(id));
     var id = JSON.stringify({"type":"group","id":group_id})
-    this.router.navigate(['/dashboard/apps/' + id]);
+    this.appService.id = id
+    // this.appService.addIdFormData(JSON.stringify(id));
+
+    this.router.navigate(['/dashboard/apps']);
+  }
+  goPermissions(group_id:any){
+    var id = JSON.stringify({"type":"group","id":group_id})
+    this.permissionsService.id = id
+    this.permissionsService.addIdFormData()
+    // 
+    this.router.navigate(['/dashboard/permissions']);
   }
 
   ngOnInit() {
@@ -48,11 +60,15 @@ export class GroupsComponent {
         this.error = err.error.message.ar
         this.status = false;
         this.isLoading = false;
+        this.permissionsService.deleteId()
+        
       }
       ,
       complete: () => {
         this.isLoading = false;
+        this.permissionsService.deleteId()
       }
+      
     })
   }
 

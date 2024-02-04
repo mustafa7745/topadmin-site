@@ -6,6 +6,7 @@ import { InitComponent } from './init/init.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { GroupsComponent } from './groups/groups.component';
 import { AppsComponent } from './apps/apps.component';
+import { PermissionsComponent } from './permissions/permissions.component';
 
 export const routes: Routes = [
   { path: 'init', component: InitComponent },
@@ -16,7 +17,8 @@ export const routes: Routes = [
     component: DashboardComponent,
     children: [
       { path: 'groups', component: GroupsComponent },
-      { path: 'apps/:id', component: AppsComponent },
+      { path: 'permissions', component: PermissionsComponent },
+      // { path: 'apps/:id', component: AppsComponent },
       { path: 'apps', component: AppsComponent },],
       
   },
