@@ -21,8 +21,8 @@ export class PermissionsService {
     this.formData = this.loginService.getFormData()
   }
 
-  read(): Observable<Permissions[]> {
-    return this.apiService.http.post<Permissions[]>(this.apiService.apiUrl+'user/permissions/read.php',this.formData)
+  read(): Observable<Permission[]> {
+    return this.apiService.http.post<Permission[]>(this.apiService.apiUrl+'user/permissions/read.php',this.formData)
   }
   addIdFormData(){
     // console.log(this.formData);
@@ -36,7 +36,7 @@ export class PermissionsService {
     this.id = undefined
   }
 }
-export interface Permissions {
+export interface Permission {
   permission_id: string;
   permission_name: string;
   permission_created_at: Date;

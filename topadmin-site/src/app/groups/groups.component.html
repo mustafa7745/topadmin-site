@@ -6,7 +6,7 @@
         <ng-template ngFor let-item [ngForOf]="groups" let-c="index">
             <a class="group">{{item.group_name}}
                 {{item.group_created_at}}
-                <button (click)="setGroupId(item.group_id)">
+                <button (click)="goAppGroup(item.group_id)">
                     التطبيقات
                 </button>
                 <button (click)="goPermissions(item.group_id)">
@@ -20,3 +20,4 @@
         {{error}}
     </ng-template>
 </ng-template>
+<router-outlet></router-outlet>

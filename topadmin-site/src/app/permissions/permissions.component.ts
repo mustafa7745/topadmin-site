@@ -1,5 +1,5 @@
 import { Component } from '@angular/core';
-import { Permissions, PermissionsService } from '../services/permissions.service';
+import { Permission, PermissionsService } from '../services/permissions.service';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -10,7 +10,7 @@ import { CommonModule } from '@angular/common';
   styleUrl: './permissions.component.css'
 })
 export class PermissionsComponent {
-  permissions: Permissions[] = [];
+  permissions: Permission[] = [];
   isLoading = true;
   status = false;
   error ='';

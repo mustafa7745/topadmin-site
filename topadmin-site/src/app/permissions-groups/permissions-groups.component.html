@@ -1,0 +1,31 @@
+<ng-template #standardTpl> I'm a standard toast </ng-template>
+<button class="btn btn-primary" (click)="showStandard(standardTpl)" ngbTooltip="Will disappear in 5s"
+		>Standard toast</button>
+<div *ngIf="isLoading; then thenBlock; else elseBlock"></div>
+<ng-template #thenBlock>Loading...</ng-template>
+<ng-template #elseBlock>
+  <div *ngIf="status; then thenBlock; else elseBlock"></div>
+  <ng-template #thenBlock>
+    <div *ngIf="permissionsGroups.length == 0; then thenBlock; else elseBlock"></div>
+    <ng-template #thenBlock>Empty Data</ng-template>
+    <ng-template #elseBlock>
+      <ng-template ngFor let-item [ngForOf]="permissionsGroups" let-c="index">
+        <a class="group">
+          {{ item.permission.permission_name }}
+          <button class="btn btn-outline-primary me-2" (click)="open(item.permission.permission_name)">
+            <div>Delete</div>
+          </button>
+        </a>
+      </ng-template>
+    </ng-template>
+  </ng-template>
+  <ng-template #elseBlock>
+   {{error}}
+  </ng-template>
+</ng-template>
+
+<app-toasts aria-live="polite" aria-atomic="true"></app-toasts>
+
+
+
+
