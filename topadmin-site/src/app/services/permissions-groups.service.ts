@@ -9,7 +9,7 @@ import { Permission } from './permissions.service';
   providedIn: 'root'
 })
 export class PermissionsGroupsService {
-
+  permissionsGroups: PermissionGroup[] = [];
   formData: any;
   id:any
   constructor(
@@ -26,8 +26,17 @@ export class PermissionsGroupsService {
       this.formData
     );
   }
+  delete(ids:any): Observable<any> {
+    this.formData.delete("id");
+    this.formData.append("ids",ids)
+    return this.apiService.http.post(
+      this.apiService.apiUrl + 'user/permissions_groups/delete.php',
+      this.formData
+    );
+  }
 }
 export interface PermissionGroup {
+  permission_group_id:string;
   permission: Permission;
   group:      Group;
 }

@@ -24,6 +24,15 @@ export class PermissionsService {
   read(): Observable<Permission[]> {
     return this.apiService.http.post<Permission[]>(this.apiService.apiUrl+'user/permissions/read.php',this.formData)
   }
+  search(search:any): Observable<Permission[]> {
+    const s = JSON.stringify({"searchBy":"name","search":search})
+    this.formData.delete("id")
+    
+    this.formData.append("search",s)
+    console.log(s);
+    console.log(this.formData);
+    return this.apiService.http.post<Permission[]>(this.apiService.apiUrl+'user/permissions/read.php',this.formData)
+  }
   addIdFormData(){
     // console.log(this.formData);
     this.formData.append("id",this.id);

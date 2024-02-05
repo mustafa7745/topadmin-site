@@ -1,18 +1,19 @@
-<ng-template #standardTpl> I'm a standard toast </ng-template>
-<button class="btn btn-primary" (click)="showStandard(standardTpl)" ngbTooltip="Will disappear in 5s"
-		>Standard toast</button>
 <div *ngIf="isLoading; then thenBlock; else elseBlock"></div>
 <ng-template #thenBlock>Loading...</ng-template>
 <ng-template #elseBlock>
   <div *ngIf="status; then thenBlock; else elseBlock"></div>
   <ng-template #thenBlock>
-    <div *ngIf="permissionsGroups.length == 0; then thenBlock; else elseBlock"></div>
+    <div *ngIf="pgService.permissionsGroups.length == 0; then thenBlock; else elseBlock"></div>
+    <button class="btn btn-outline-success me-2" (click)="openAdd()">
+      <div>Add</div>
+    </button>
+    <!--  -->
     <ng-template #thenBlock>Empty Data</ng-template>
     <ng-template #elseBlock>
-      <ng-template ngFor let-item [ngForOf]="permissionsGroups" let-c="index">
+      <ng-template ngFor let-item [ngForOf]="pgService.permissionsGroups" let-c="index">
         <a class="group">
           {{ item.permission.permission_name }}
-          <button class="btn btn-outline-primary me-2" (click)="open(item.permission.permission_name)">
+          <button class="btn btn-outline-primary me-2" (click)="open(item.permission.permission_name,item.permission_group_id)">
             <div>Delete</div>
           </button>
         </a>
@@ -23,8 +24,6 @@
    {{error}}
   </ng-template>
 </ng-template>
-
-<app-toasts aria-live="polite" aria-atomic="true"></app-toasts>
 
 
 
