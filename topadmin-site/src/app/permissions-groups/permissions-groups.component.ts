@@ -51,7 +51,7 @@ import { Permission, PermissionsService } from '../services/permissions.service'
 export class NgbdModalConfirm {
   name11: any;
   id: any;
-  constructor(private pgService: PermissionsGroupsService) {}
+  constructor(private pgService: PermissionsGroupsService) { }
   modal = inject(NgbActiveModal);
   loadingModal = inject(NgbModal);
   delete() {
@@ -80,12 +80,20 @@ export class NgbdModalConfirm {
       },
       error: (err) => {
         a.close();
+        console.log(err);
+
         const res = this.loadingModal.open(NgbdModalSuccessResult, {
           keyboard: false,
           backdrop: 'static',
           centered: true,
         });
-        res.componentInstance.result = 'fail';
+        if (err.status === 400) {
+          res.componentInstance.result = err.error.message.en;
+        }
+        else {
+          res.componentInstance.result = 'fail';
+        }
+
       },
     });
   }
@@ -143,10 +151,13 @@ export class PermissionsGroupsComponent {
   error = '';
   show = true;
 
-  constructor(public pgService: PermissionsGroupsService) {}
+  constructor(public pgService: PermissionsGroupsService) { }
 
   private modalService = inject(NgbModal);
   ngOnInit() {
+    this.read()
+  }
+  read() {
     this.pgService.read().subscribe({
       next: (response) => {
         this.status = true;
@@ -162,6 +173,9 @@ export class PermissionsGroupsComponent {
         this.isLoading = false;
       },
     });
+  }
+  refresh() {
+    this.read()
   }
 
   open(name: string, id: any) {
@@ -179,16 +193,18 @@ export class PermissionsGroupsComponent {
       backdrop: 'static',
       centered: true,
     });
+    const id = JSON.parse(this.pgService.id)
+    a.componentInstance.group_id = id.id
   }
 }
 
 @Component({
   selector: 'ngbd-modal-confirm',
   standalone: true,
-  imports: [NgbDropdownModule,CommonModule,FormsModule],
+  imports: [NgbDropdownModule, CommonModule, FormsModule],
   template: `
     <div class="modal-header">
-      <h4 class="modal-title" id="modal-title">Add Permission Group</h4>
+      <h4 class="modal-title" id="modal-title">Add Permission Group {{group_id}}</h4>
       <button
         type="button"
         class="btn-close"
@@ -206,7 +222,10 @@ export class PermissionsGroupsComponent {
               id="dropdownBasic1"
               ngbDropdownToggle
             >
-              Select Permession
+            <div *ngIf="selectedPerm == undefined; then thenBlock; else elseBlock"></div>
+<ng-template #thenBlock>Select Permession</ng-template>
+<ng-template #elseBlock>{{selectedPerm?.permission_name}}</ng-template>
+              
             </button>
             <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
               <div class="active-pink-3 active-pink-4 mb-4">
@@ -218,20 +237,58 @@ export class PermissionsGroupsComponent {
                   (input)="search($event)"
                 />
               </div>
-            {{p}}
+              <button class="btn btn-outline-primary me-2" (click)="setPer(undefined)">
+              <div>None</div>
+            </button>
+              <ng-template ngFor let-item [ngForOf]="p" let-c="index">
+              
+              <button class="btn btn-primary me-2" (click)="setPer(item)">
+              <div>{{ item.permission_name }}</div>
+            </button>
+            </ng-template>
+          
+           
             </div>
           </div>
         </div>
       </div>
     </div>
+    <div class="modal-footer">
+    <button type="button" class="btn btn-outline-secondary" (click)="onAdd()">
+      Save
+    </button>
+  </div>
   `,
 })
 export class NgbdModalAdd {
-  p : Permission[] = []
+  // b = { "TAG": "READ_PERMISSIONS", "FROM": "0"};
+  // b = {
+  //   "TAG": "SEARCH",
+  //   "SEARCH_BY":"NAME",
+  //   "SEARCH":"",
+  //   "CAUSE":"ADD_TO_PG",
+  //   "FROM": "0"
+  // };
+  // b = {
+  //   "TAG": "READ",
+  //   "CAUSE":"ADD_TO_PG",
+  //   "FROM": "0"
+  // };
+  // b = {
+  //     "TAG": "READ",
+  //     "FROM": "0"
+  //   };
+  selectedPerm: Permission | undefined;
+  group_id: any;
+  p: Permission[] = []
   name = '';
   modal = inject(NgbActiveModal);
-  constructor(public permissionsService: PermissionsService) {}
-  search(event:any){
+  constructor(public permissionsService: PermissionsService,
+    private pgService: PermissionsGroupsService) { }
+  setPer(per: Permission | undefined) {
+    this.selectedPerm = per;
+  }
+  search(event: any) {
     const value = ((event.target as HTMLInputElement).value);
     this.name = value;
 
@@ -243,7 +300,7 @@ export class NgbdModalAdd {
       },
       error: (err) => {
         console.log(err);
-        
+
         // this.error = err.error.message.ar;
         // this.status = false;
         // this.isLoading = false;
@@ -253,5 +310,46 @@ export class NgbdModalAdd {
       },
     });
   }
+  successModal = inject(NgbModal);
+  onAdd() {
 
+    const a = this.successModal.open(NgbdModalLoading, {
+      keyboard: false,
+      backdrop: 'static',
+      centered: true,
+    });
+
+    this.pgService.add(this.selectedPerm?.permission_id, this.group_id).subscribe({
+      next: (response) => {
+        a.close();
+        this.modal.close()
+
+        const res = this.successModal.open(NgbdModalSuccessResult, {
+          keyboard: false,
+          backdrop: 'static',
+          centered: true,
+        });
+        res.componentInstance.result = 'Done';
+      },
+      error: (err) => {
+        a.close();
+        this.modal.close();
+        console.log(err);
+
+        const res = this.successModal.open(NgbdModalSuccessResult, {
+          keyboard: false,
+          backdrop: 'static',
+          centered: true,
+        });
+        if (err.status === 400) {
+          res.componentInstance.result = err.error.message.en;
+        }
+        else {
+          res.componentInstance.result = 'fail';
+        }
+
+      },
+    });
+
+  }
 }

@@ -21,12 +21,21 @@ export class PermissionsService {
     this.formData = this.loginService.getFormData()
   }
 
+  resetFormData(){
+    this.formData.delete("id")
+    this.formData.delete("ids")
+    this.formData.delete("permission_id")
+    this.formData.delete("group_id")
+    this.formData.delete("search")
+  }
+
   read(): Observable<Permission[]> {
+    this.resetFormData()
     return this.apiService.http.post<Permission[]>(this.apiService.apiUrl+'user/permissions/read.php',this.formData)
   }
   search(search:any): Observable<Permission[]> {
+    this.resetFormData()
     const s = JSON.stringify({"searchBy":"name","search":search})
-    this.formData.delete("id")
     
     this.formData.append("search",s)
     console.log(s);

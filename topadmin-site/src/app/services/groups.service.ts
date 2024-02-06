@@ -11,9 +11,14 @@ export class GroupsService {
   constructor(
     private apiService:ApiService,
     private loginService:LoginService
-  ) { }
+  ) { 
+
+  }
 
   read(): Observable<Group[]> {
+    this.loginService.getFormData().forEach((x: any) => {
+      console.log(x);
+    });
     return this.apiService.http.post<Group[]>(this.apiService.apiUrl+'user/groups/read.php',this.loginService.getFormData())
   }
 }

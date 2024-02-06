@@ -10,28 +10,49 @@ import { Permission } from './permissions.service';
 })
 export class PermissionsGroupsService {
   permissionsGroups: PermissionGroup[] = [];
-  formData: any;
+  fm: any;
   id:any
   constructor(
     private apiService: ApiService,
     private loginService: LoginService
   ) {
-    this.formData = new FormData();
-    this.formData = this.loginService.getFormData();
+    // this.fm = new FormData();
+    const m = this.loginService.getFormData();
+    this.fm = m
   }
   read(): Observable<PermissionGroup[]> {
-    this.formData.append("id",this.id)
+    this.resetFormData()
+    this.fm.append("id",this.id)
     return this.apiService.http.post<PermissionGroup[]>(
       this.apiService.apiUrl + 'user/permissions_groups/read.php',
-      this.formData
+      this.fm
     );
   }
   delete(ids:any): Observable<any> {
-    this.formData.delete("id");
-    this.formData.append("ids",ids)
+    this.resetFormData()
+    this.fm.append("ids",ids)
     return this.apiService.http.post(
       this.apiService.apiUrl + 'user/permissions_groups/delete.php',
-      this.formData
+      this.fm
+    );
+  }
+  resetFormData(){
+    this.fm.delete("id")
+    this.fm.delete("ids")
+    this.fm.delete("permission_id")
+    this.fm.delete("group_id")
+    this.fm.delete("search")
+  }
+  add(permission_id:any,group_id:any): Observable<any> {
+   this.resetFormData()
+    this.fm.append("permission_id",permission_id)
+    this.fm.append("group_id",group_id)
+    console.log(group_id);
+    console.log(permission_id);
+    
+    return this.apiService.http.post(
+      this.apiService.apiUrl + 'user/permissions_groups/add.php',
+      this.fm
     );
   }
 }

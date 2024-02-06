@@ -30,7 +30,7 @@ export class LoginService {
     }
     return '';
   }
-  getFormData(){
+  getFormData():FormData{
     this.apiService.formData.append('user_phone', this.getPhone());
     this.apiService.formData.append('user_password', this.getPassword());
     return this.apiService.formData;
