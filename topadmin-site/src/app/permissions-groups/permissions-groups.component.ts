@@ -14,14 +14,17 @@ import { CommonModule, NgTemplateOutlet } from '@angular/common';
 import { ToastService } from '../services/toast-service';
 import { log } from 'console';
 import { FormsModule } from '@angular/forms';
-import { Permission, PermissionsService } from '../services/permissions.service';
+import {
+  Permission,
+  PermissionsService,
+} from '../services/permissions.service';
 
 @Component({
   selector: 'ngbd-modal-confirm',
   standalone: true,
   template: `
     <div class="modal-header bg-success">
-      <h4 class="modal-title" id="modal-title">Profile deletion</h4>
+      <h4 class="modal-title" id="modal-title">Item deletion</h4>
       <button
         type="button"
         class="btn-close"
@@ -31,7 +34,7 @@ import { Permission, PermissionsService } from '../services/permissions.service'
     </div>
     <div class="modal-body">
       <p>
-        <strong>Are you sure you want to delete {{ name11 }}</strong>
+        <strong>Are you sure you want to delete {{ ids.length }} Items</strong>
       </p>
     </div>
     <div class="modal-footer">
@@ -50,27 +53,38 @@ import { Permission, PermissionsService } from '../services/permissions.service'
 })
 export class NgbdModalConfirm {
   name11: any;
-  id: any;
-  constructor(private pgService: PermissionsGroupsService) { }
+  idsJson: any;
+  ids: string[] = [];
+  constructor(private pgService: PermissionsGroupsService) {}
   modal = inject(NgbActiveModal);
   loadingModal = inject(NgbModal);
+
   delete() {
+    console.log(this.idsJson);
     this.modal.close();
     const a = this.loadingModal.open(NgbdModalLoading, {
       keyboard: false,
       backdrop: 'static',
       centered: true,
     });
-    const id = JSON.stringify({ '1': this.id });
-    this.pgService.delete(id).subscribe({
+    // const id = JSON.stringify({ '1': this.id });
+    this.pgService.delete(this.idsJson).subscribe({
       next: (response) => {
         a.close();
-        const index = this.pgService.permissionsGroups.findIndex(
-          (obj) => obj.permission_group_id === this.id
-        );
-        if (index > -1) {
-          this.pgService.permissionsGroups.splice(index, 1);
-        }
+        this.ids.forEach((element) => {
+          const index = this.pgService.permissionsGroups.findIndex(
+            (obj) => obj.permission_group_id === element
+          );
+          if (index > -1) {
+            this.pgService.permissionsGroups.splice(index, 1);
+          }
+        });
+        // const index = this.pgService.permissionsGroups.findIndex(
+        //   (obj) => obj.permission_group_id === this.id
+        // );
+        // if (index > -1) {
+        //   this.pgService.permissionsGroups.splice(index, 1);
+        // }
         const res = this.loadingModal.open(NgbdModalSuccessResult, {
           keyboard: false,
           backdrop: 'static',
@@ -89,11 +103,9 @@ export class NgbdModalConfirm {
         });
         if (err.status === 400) {
           res.componentInstance.result = err.error.message.en;
-        }
-        else {
+        } else {
           res.componentInstance.result = 'fail';
         }
-
       },
     });
   }
@@ -150,19 +162,47 @@ export class PermissionsGroupsComponent {
   status = false;
   error = '';
   show = true;
+  //
+  isHaveMore = false;
+  isLoadingMore = false;
+  selectedItems: string[] = [];
+  deletedIDS: any;
 
-  constructor(public pgService: PermissionsGroupsService) { }
+  constructor(public pgService: PermissionsGroupsService) {}
+
+  onSelectItem(event: any, id: string) {
+    if (event.target.checked) {
+      this.selectedItems.push(id);
+      var ids = '{}';
+      var j = JSON.parse(ids);
+      for (let index = 0; index < this.selectedItems.length; index++) {
+        j[index + 1] = this.selectedItems[index].toString();
+      }
+      this.deletedIDS = JSON.stringify(j);
+    } else {
+      // this.selectedItems.re
+      const index = this.selectedItems.findIndex((el) => el === id);
+      if (index > -1) {
+        this.selectedItems.splice(index, 1);
+      }
+    }
+    // console.log(event.target.checked);
+  }
 
   private modalService = inject(NgbModal);
   ngOnInit() {
-    this.read()
+    this.read();
   }
   read() {
     this.pgService.read().subscribe({
       next: (response) => {
         this.status = true;
         this.pgService.permissionsGroups = response;
-        console.log(response);
+        if (response.length == 3) {
+          this.isHaveMore = true;
+        } else {
+          this.isHaveMore = false;
+        }
       },
       error: (err) => {
         this.error = err.error.message.ar;
@@ -174,18 +214,41 @@ export class PermissionsGroupsComponent {
       },
     });
   }
+  readMore() {
+    this.isLoadingMore = true;
+    this.pgService.readMore().subscribe({
+      next: (response) => {
+        this.status = true;
+        this.pgService.permissionsGroups =
+          this.pgService.permissionsGroups.concat(response);
+        if (response.length == 3) {
+          this.isHaveMore = true;
+        } else {
+          this.isHaveMore = false;
+        }
+        this.isLoadingMore = false;
+      },
+      error: (err) => {
+        // this.error = err.error.message.ar;
+        // this.status = false;
+        // this.isLoading = false;
+        this.isLoadingMore = false;
+      },
+    });
+  }
   refresh() {
-    this.read()
+    this.read();
   }
 
-  open(name: string, id: any) {
+  delete() {
     const a = this.modalService.open(NgbdModalConfirm, {
       keyboard: false,
       backdrop: 'static',
       centered: true,
     });
     a.componentInstance.name11 = name;
-    a.componentInstance.id = id;
+    a.componentInstance.ids = this.selectedItems;
+    a.componentInstance.idsJson = this.deletedIDS;
   }
   openAdd() {
     const a = this.modalService.open(NgbdModalAdd, {
@@ -193,8 +256,8 @@ export class PermissionsGroupsComponent {
       backdrop: 'static',
       centered: true,
     });
-    const id = JSON.parse(this.pgService.id)
-    a.componentInstance.group_id = id.id
+    // const id = JSON.parse(this.pgService.id);
+    a.componentInstance.group_id = this.pgService.id;
   }
 }
 
@@ -204,7 +267,9 @@ export class PermissionsGroupsComponent {
   imports: [NgbDropdownModule, CommonModule, FormsModule],
   template: `
     <div class="modal-header">
-      <h4 class="modal-title" id="modal-title">Add Permission Group {{group_id}}</h4>
+      <h4 class="modal-title" id="modal-title">
+        Add Permission Group {{ group_id }}
+      </h4>
       <button
         type="button"
         class="btn-close"
@@ -222,10 +287,17 @@ export class PermissionsGroupsComponent {
               id="dropdownBasic1"
               ngbDropdownToggle
             >
-            <div *ngIf="selectedPerm == undefined; then thenBlock; else elseBlock"></div>
-<ng-template #thenBlock>Select Permession</ng-template>
-<ng-template #elseBlock>{{selectedPerm?.permission_name}}</ng-template>
-              
+              <div
+                *ngIf="
+                  selectedPerm == undefined;
+                  then thenBlock;
+                  else elseBlock
+                "
+              ></div>
+              <ng-template #thenBlock>Select Permession</ng-template>
+              <ng-template #elseBlock>{{
+                selectedPerm?.permission_name
+              }}</ng-template>
             </button>
             <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
               <div class="active-pink-3 active-pink-4 mb-4">
@@ -237,27 +309,27 @@ export class PermissionsGroupsComponent {
                   (input)="search($event)"
                 />
               </div>
-              <button class="btn btn-outline-primary me-2" (click)="setPer(undefined)">
-              <div>None</div>
-            </button>
+              <button
+                class="btn btn-outline-primary me-2"
+                (click)="setPer(undefined)"
+              >
+                <div>None</div>
+              </button>
               <ng-template ngFor let-item [ngForOf]="p" let-c="index">
-              
-              <button class="btn btn-primary me-2" (click)="setPer(item)">
-              <div>{{ item.permission_name }}</div>
-            </button>
-            </ng-template>
-          
-           
+                <button class="btn btn-primary me-2" (click)="setPer(item)">
+                  <div>{{ item.permission_name }}</div>
+                </button>
+              </ng-template>
             </div>
           </div>
         </div>
       </div>
     </div>
     <div class="modal-footer">
-    <button type="button" class="btn btn-outline-secondary" (click)="onAdd()">
-      Save
-    </button>
-  </div>
+      <button type="button" class="btn btn-outline-secondary" (click)="onAdd()">
+        Save
+      </button>
+    </div>
   `,
 })
 export class NgbdModalAdd {
@@ -280,19 +352,24 @@ export class NgbdModalAdd {
   //   };
   selectedPerm: Permission | undefined;
   group_id: any;
-  p: Permission[] = []
+  p: Permission[] = [];
   name = '';
   modal = inject(NgbActiveModal);
-  constructor(public permissionsService: PermissionsService,
-    private pgService: PermissionsGroupsService) { }
+  constructor(
+    public permissionsService: PermissionsService,
+    private pgService: PermissionsGroupsService
+  ) {}
   setPer(per: Permission | undefined) {
     this.selectedPerm = per;
   }
   search(event: any) {
-    const value = ((event.target as HTMLInputElement).value);
+    const value = (event.target as HTMLInputElement).value;
     this.name = value;
+console.log("ggggid");
+console.log(this.group_id);
 
-    this.permissionsService.search(value).subscribe({
+
+    this.permissionsService.search(value,this.group_id).subscribe({
       next: (response) => {
         // this.status = true;
         this.p = response;
@@ -312,44 +389,42 @@ export class NgbdModalAdd {
   }
   successModal = inject(NgbModal);
   onAdd() {
-
     const a = this.successModal.open(NgbdModalLoading, {
       keyboard: false,
       backdrop: 'static',
       centered: true,
     });
 
-    this.pgService.add(this.selectedPerm?.permission_id, this.group_id).subscribe({
-      next: (response) => {
-        a.close();
-        this.modal.close()
+    this.pgService
+      .add(this.selectedPerm?.permission_id, this.group_id)
+      .subscribe({
+        next: (response) => {
+          a.close();
+          this.modal.close();
 
-        const res = this.successModal.open(NgbdModalSuccessResult, {
-          keyboard: false,
-          backdrop: 'static',
-          centered: true,
-        });
-        res.componentInstance.result = 'Done';
-      },
-      error: (err) => {
-        a.close();
-        this.modal.close();
-        console.log(err);
+          const res = this.successModal.open(NgbdModalSuccessResult, {
+            keyboard: false,
+            backdrop: 'static',
+            centered: true,
+          });
+          res.componentInstance.result = 'Done';
+        },
+        error: (err) => {
+          a.close();
+          this.modal.close();
+          console.log(err);
 
-        const res = this.successModal.open(NgbdModalSuccessResult, {
-          keyboard: false,
-          backdrop: 'static',
-          centered: true,
-        });
-        if (err.status === 400) {
-          res.componentInstance.result = err.error.message.en;
-        }
-        else {
-          res.componentInstance.result = 'fail';
-        }
-
-      },
-    });
-
+          const res = this.successModal.open(NgbdModalSuccessResult, {
+            keyboard: false,
+            backdrop: 'static',
+            centered: true,
+          });
+          if (err.status === 400) {
+            res.componentInstance.result = err.error.message.en;
+          } else {
+            res.componentInstance.result = 'fail';
+          }
+        },
+      });
   }
 }

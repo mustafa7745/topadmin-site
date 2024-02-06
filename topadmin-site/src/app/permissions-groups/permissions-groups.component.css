@@ -1,10 +1,13 @@
 .group{
-    display: block;
+    display: flex;
     background: antiquewhite;
     height: 60px;
     margin: 10px;
     padding: 10px;
-    text-align: center;
+    /* text-align: center; */
     border-radius: 10px;
     cursor: pointer;
+    align-content: center;
+    justify-content: space-between;
+
 }

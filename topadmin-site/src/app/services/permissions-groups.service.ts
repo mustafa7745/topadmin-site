@@ -22,7 +22,27 @@ export class PermissionsGroupsService {
   }
   read(): Observable<PermissionGroup[]> {
     this.resetFormData()
-    this.fm.append("id",this.id)
+    const data = {
+      "TAG": "READ",
+      "READ_BY":"GROUP_ID",
+      "ID":this.id,
+      "FROM": "0"
+  }
+    this.fm.append("data",JSON.stringify(data))
+    return this.apiService.http.post<PermissionGroup[]>(
+      this.apiService.apiUrl + 'user/permissions_groups/read.php',
+      this.fm
+    );
+  }
+  readMore(): Observable<PermissionGroup[]> {
+    this.resetFormData()
+    const data = {
+      "TAG": "READ",
+      "READ_BY":"GROUP_ID",
+      "ID":this.id,
+      "FROM": this.permissionsGroups.length
+  }
+    this.fm.append("data",JSON.stringify(data))
     return this.apiService.http.post<PermissionGroup[]>(
       this.apiService.apiUrl + 'user/permissions_groups/read.php',
       this.fm

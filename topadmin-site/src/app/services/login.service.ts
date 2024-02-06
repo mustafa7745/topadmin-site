@@ -33,6 +33,7 @@ export class LoginService {
   getFormData():FormData{
     this.apiService.formData.append('user_phone', this.getPhone());
     this.apiService.formData.append('user_password', this.getPassword());
+    this.apiService.formData.append('data', '{}');
     return this.apiService.formData;
   }
   constructor(
@@ -67,6 +68,7 @@ export class LoginService {
   checkUser( phone: string, password: string): Observable<any> {
     this.apiService.formData.append('user_phone', phone);
     this.apiService.formData.append('user_password', password);
+    this.apiService.formData.append('data', '{}');
     //
     return this.apiService.sendHttpPost('user/login.php',this.apiService.formData);
   }

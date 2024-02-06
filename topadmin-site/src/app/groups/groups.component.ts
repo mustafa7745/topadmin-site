@@ -40,8 +40,8 @@ export class GroupsComponent {
     this.router.navigate(['/dashboard/groups/apps-group/']);
   }
   goPermissions(group_id:any){
-    var id = JSON.stringify({"type":"group","id":group_id})
-    this.permissionsGroupsService.id = id
+    // var id = JSON.stringify({"type":"group","id":group_id})
+    this.permissionsGroupsService.id = group_id
     // var id = JSON.stringify({"type":"group","id":group_id})
     // this.permissionsService.id = id
     // this.permissionsService.addIdFormData()

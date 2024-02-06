@@ -33,11 +33,18 @@ export class PermissionsService {
     this.resetFormData()
     return this.apiService.http.post<Permission[]>(this.apiService.apiUrl+'user/permissions/read.php',this.formData)
   }
-  search(search:any): Observable<Permission[]> {
+  search(search:any,group_id:any): Observable<Permission[]> {
     this.resetFormData()
-    const s = JSON.stringify({"searchBy":"name","search":search})
+    const s = JSON.stringify({
+      "TAG": "SEARCH",
+      "SEARCH_BY":"NAME",
+      "SEARCH":search,
+      "CAUSE":"ADD_TO_PG",
+      "G_ID":group_id,
+      "FROM": "0"
+  })
     
-    this.formData.append("search",s)
+    this.formData.append("data",s)
     console.log(s);
     console.log(this.formData);
     return this.apiService.http.post<Permission[]>(this.apiService.apiUrl+'user/permissions/read.php',this.formData)
