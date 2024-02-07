@@ -1,0 +1,55 @@
+<div class="modal-header">
+  <h4 class="modal-title" id="modal-title">
+    Add Permission Group {{ group_id }}
+  </h4>
+  <button type="button" class="btn-close" aria-describedby="modal-title"
+    (click)="modal.dismiss('Cross click')"></button>
+</div>
+<div class="modal-body">
+  <div class="row">
+    <div class="col">
+      <div ngbDropdown class="d-inline-block">
+        <button type="button" class="btn btn-outline-primary" id="dropdownBasic1" ngbDropdownToggle>
+          <div *ngIf="
+              selectedPerm == undefined;
+              then thenBlock;
+              else elseBlock
+            "></div>
+          <ng-template #thenBlock>Select Permession</ng-template>
+          <ng-template #elseBlock>{{
+            selectedPerm?.permission_name
+            }}</ng-template>
+        </button>
+        <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+          <div class="active-pink-3 active-pink-4 mb-4">
+            <input class="form-control" type="text" placeholder="Search" aria-label="Search" (input)="search($event)" />
+            <span *ngIf="isLoading">
+              <div class="spinner-border" role="status">
+                <span class="sr-only"></span>
+              </div>
+            </span>
+          </div>
+
+          <ng-template ngFor let-item [ngForOf]="p" let-c="index">
+            <button class="btn btn-primary me-2" (click)="setPer(item)">
+              <div>{{ item.permission_name }}</div>
+            </button>
+          </ng-template>
+        </div>
+      </div>
+      <span *ngIf="selectedPerm != undefined">
+        <button class="btn btn-outline-primary me-2" (click)="setPer(undefined)">
+          <div>None</div>
+        </button>
+      </span>
+    </div>
+  </div>
+</div>
+<div class="modal-footer">
+  <span *ngIf="selectedPerm != undefined">
+    <button type="button" class="btn btn-outline-secondary" (click)="onAdd()">
+      Save
+    </button>
+  </span>
+
+</div>

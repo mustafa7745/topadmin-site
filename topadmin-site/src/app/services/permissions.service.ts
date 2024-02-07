@@ -8,6 +8,8 @@ import { LoginService } from './login.service';
   providedIn: 'root'
 })
 export class PermissionsService {
+  permissions: Permission[] = [];
+  // 
 
   id:any
 
@@ -30,7 +32,19 @@ export class PermissionsService {
   }
 
   read(): Observable<Permission[]> {
-    this.resetFormData()
+    const s = JSON.stringify({
+      "TAG": "READ",
+      "FROM": "0"
+  })
+  this.formData.append("data",s)
+    return this.apiService.http.post<Permission[]>(this.apiService.apiUrl+'user/permissions/read.php',this.formData)
+  }
+  readMore(): Observable<Permission[]> {
+    const s = JSON.stringify({
+      "TAG": "READ",
+      "FROM": this.permissions.length
+  })
+  this.formData.append("data",s)
     return this.apiService.http.post<Permission[]>(this.apiService.apiUrl+'user/permissions/read.php',this.formData)
   }
   search(search:any,group_id:any): Observable<Permission[]> {
@@ -43,6 +57,8 @@ export class PermissionsService {
       "G_ID":group_id,
       "FROM": "0"
   })
+  
+ 
     
     this.formData.append("data",s)
     console.log(s);

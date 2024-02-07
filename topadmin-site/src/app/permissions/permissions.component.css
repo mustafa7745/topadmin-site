@@ -1,10 +1,13 @@
-.group{
-    display: block;
-    background: antiquewhite;
-    height: 22px;
-    margin: 10px;
-    padding: 10px;
-    text-align: center;
-    border-radius: 10px;
-    cursor: pointer;
+.modifier{
+    display: flex;
+    height: 70px;
+    background-color: aquamarine;
+    justify-content: space-between;
+}
+.crud{
+    display: inline-flex;
+    height: 50px;
+    background-color: white;
+    justify-content: space-between;
+    width: 180px;
 }
