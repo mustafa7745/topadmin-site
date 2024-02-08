@@ -39,6 +39,24 @@ export class PermissionsService {
   this.formData.append("data",s)
     return this.apiService.http.post<Permission[]>(this.apiService.apiUrl+'user/permissions/read.php',this.formData)
   }
+  add(name:string): Observable<Permission[]> {
+    const s = JSON.stringify({
+      "TAG": "ADD",
+      "PERMISSION_NAME":name
+  })
+  this.formData.append("data",s)
+    return this.apiService.http.post<Permission[]>(this.apiService.apiUrl+'user/permissions/add.php',this.formData)
+  }
+  searchNative(search:string): Observable<Permission[]> {
+    const s = JSON.stringify({
+      "TAG": "SEARCH",
+      "SEARCH_BY":"NAME",
+      "SEARCH":search,
+      "FROM": "0"
+  })
+  this.formData.append("data",s)
+    return this.apiService.http.post<Permission[]>(this.apiService.apiUrl+'user/permissions/read.php',this.formData)
+  }
   readMore(): Observable<Permission[]> {
     const s = JSON.stringify({
       "TAG": "READ",

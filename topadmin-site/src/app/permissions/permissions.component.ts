@@ -1,20 +1,27 @@
-import { Component } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import {
   Permission,
   PermissionsService,
 } from '../services/permissions.service';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
+import { ModalAddPermission } from './add-permissions.component';
 
 @Component({
   selector: 'app-permissions',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule,FormsModule],
   templateUrl: './permissions.component.html',
   styleUrl: './permissions.component.css',
 })
 export class PermissionsComponent {
+  modalService = inject(NgbModal);
   selectedItems: string[] = [];
+  searchValue = '';
+  isDisabledSearchButton(){
+   return !(this.searchValue.length>0)
+  }
  
   isLoading = true;
   status = false;
@@ -34,6 +41,35 @@ export class PermissionsComponent {
     else{
       this.selectedItems= []
     }
+  }
+  search(){
+    this.selectedItems= []
+    this.permissionsService.searchNative(this.searchValue).subscribe({
+      next: (response) => {
+        this.status = true;
+        this.permissionsService.permissions = response;
+        console.log(response);
+        if (response.length == 3) {
+          this.isHaveMore = true;
+        } else {
+          this.isHaveMore = false;
+        }
+        this.isLoadingMore = false;
+      },
+      error: (err) => {
+        console.log(err);
+
+        this.error = err.error.message.ar;
+        this.status = false;
+        this.isLoading = false;
+        // this.permissions.deleteId()
+      },
+      complete: () => {
+        this.isLoading = false;
+        // this.permissions.deleteId()
+      },
+    });
+
   }
   selectItem(id: string) {
     const index = this.selectedItems.findIndex((el) => el === id);
@@ -61,6 +97,13 @@ export class PermissionsComponent {
         // this.isLoading = false;
         this.isLoadingMore = false;
       },
+    });
+  }
+  onAdd() {
+    const a = this.modalService.open(ModalAddPermission, {
+      keyboard: false,
+      backdrop: 'static',
+      centered: true,
     });
   }
   ngOnInit() {
