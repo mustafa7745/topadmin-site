@@ -23,44 +23,44 @@ export class ModalAddPermission {
     return !(this.newName.length > 0)
   }
 
-  onSave() {
-    const a = this.modal.open(LoadingModal, {
-      keyboard: false,
-      backdrop: 'static',
-      centered: true,
-    });
-    a.componentInstance.title = "Adding ... "
+  // onSave() {
+  //   const a = this.modal.open(LoadingModal, {
+  //     keyboard: false,
+  //     backdrop: 'static',
+  //     centered: true,
+  //   });
+  //   a.componentInstance.title = "Adding ... "
 
-    this.permissionService
-      .add(this.newName)
-      .subscribe({
-        next: (response) => {
-          a.close();
-          this.activeModal.close();
+  //   this.permissionService
+  //     .add(this.newName)
+  //     .subscribe({
+  //       next: (response) => {
+  //         a.close();
+  //         this.activeModal.close();
           
-          const res = this.modal.open(SuccessInfoModal, {
-            keyboard: false,
-            backdrop: 'static',
-            centered: true,
-          });
-          res.componentInstance.result = 'Done';
-        },
-        error: (err) => {
-          a.close();
-          this.activeModal.close();
-          console.log(err);
+  //         const res = this.modal.open(SuccessInfoModal, {
+  //           keyboard: false,
+  //           backdrop: 'static',
+  //           centered: true,
+  //         });
+  //         res.componentInstance.result = 'Done';
+  //       },
+  //       error: (err) => {
+  //         a.close();
+  //         this.activeModal.close();
+  //         console.log(err);
 
-          const res = this.modal.open(SuccessInfoModal, {
-            keyboard: false,
-            backdrop: 'static',
-            centered: true,
-          });
-          if (err.status === 400) {
-            res.componentInstance.result = err.error.message.en;
-          } else {
-            res.componentInstance.result = 'fail';
-          }
-        },
-      });
-  }
+  //         const res = this.modal.open(SuccessInfoModal, {
+  //           keyboard: false,
+  //           backdrop: 'static',
+  //           centered: true,
+  //         });
+  //         if (err.status === 400) {
+  //           res.componentInstance.result = err.error.message.en;
+  //         } else {
+  //           res.componentInstance.result = 'fail';
+  //         }
+  //       },
+  //     });
+  // }
 }

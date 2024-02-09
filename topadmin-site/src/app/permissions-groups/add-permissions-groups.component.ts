@@ -29,30 +29,30 @@ export class NgbdModalAdd {
   setPer(per: Permission | undefined) {
     this.selectedPerm = per;
   }
-  search(event: any) {
-    this.error = ''
-    this.isLoading = true;
-    const value = (event.target as HTMLInputElement).value;
-    this.name = value;
-    this.permissionsService.search(value, this.group_id).subscribe({
-      next: (response) => {
-        this.status = true;
-        this.p = response;
-        console.log(response);
-        this.isLoading = false;
-      },
-      error: (err) => {
-        this.status = false;
-        console.log(err);
-        this.isLoading = false;
-        this.error = "error server"
+  // search(event: any) {
+  //   this.error = ''
+  //   this.isLoading = true;
+  //   const value = (event.target as HTMLInputElement).value;
+  //   this.name = value;
+  //   this.permissionsService.search(value, this.group_id).subscribe({
+  //     next: (response) => {
+  //       this.status = true;
+  //       this.p = response;
+  //       console.log(response);
+  //       this.isLoading = false;
+  //     },
+  //     error: (err) => {
+  //       this.status = false;
+  //       console.log(err);
+  //       this.isLoading = false;
+  //       this.error = "error server"
 
-      },
-      complete: () => {
+  //     },
+  //     complete: () => {
        
-      },
-    });
-  }
+  //     },
+  //   });
+  // }
   successModal = inject(NgbModal);
   onAdd() {
     const a = this.successModal.open(LoadingModal, {

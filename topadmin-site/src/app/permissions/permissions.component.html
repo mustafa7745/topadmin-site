@@ -1,42 +1,75 @@
-<div *ngIf="isLoading; then thenBlock; else elseBlock"></div>
+<!-- <div *ngIf="isLoading; then thenBlock; else elseBlock"></div>
 <ng-template #thenBlock>Loading...</ng-template>
 <ng-template #elseBlock>
   <div *ngIf="status; then thenBlock; else elseBlock"></div>
   <ng-template #thenBlock>
     <div class="modifier">
-     
-        <div class="search">
-          <input type="text" class="form-control"  placeholder="Search Here .." [(ngModel)] = "searchValue">
-          <button type="submit" class="btn btn-primary" [disabled]=isDisabledSearchButton() (click)="search()"><i class="bi bi-search"></i></button>
-        </div>
-       
+      <div *ngIf="permissionsService.isSearchMode" class="search"> 
+        <input
+          type="text"
+          class="form-control"
+          placeholder="Search Here .."
+          [(ngModel)]="permissionsService.searchValue"
+        />
+        <button
+          type="submit"
+          class="btn btn-primary"
+          [disabled]="permissionsService.isDisabledSearchButton()"
+          (click)="search()"
+        >
+          <i class="bi bi-search"></i>
+        </button>
+      </div>
+      <div *ngIf="!permissionsService.isSearchMode" class="search"></div>
+
       <div class="crud">
-        <button *ngIf="selectedItems.length == 1" class="button-modifier"><i class="bi bi-book"></i></button>
-        <button class="button-modifier" (click)="onAdd()"><i class="bi bi-plus-circle"></i></button>
-        <button *ngIf="selectedItems.length == 1"class="button-modifier"><i class="bi bi-pen"></i></button>
-        <button *ngIf="selectedItems.length > 0" class="button-modifier"><i class="bi bi-trash"></i></button>
+        <button *ngIf="selectedItems.length == 1" class="button-modifier">
+          <i class="bi bi-book"></i>
+        </button>
+        <button class="button-modifier" (click)="onAdd()">
+          <i class="bi bi-plus-circle"></i>
+        </button>
+        <button *ngIf="selectedItems.length == 1" class="button-modifier">
+          <i class="bi bi-pen"></i>
+        </button>
+        <button *ngIf="selectedItems.length > 0" class="button-modifier">
+          <i class="bi bi-trash"></i>
+        </button>
       </div>
     </div>
+    <div class="form-check form-switch">
+      <input
+        class="form-check-input"
+        type="checkbox"
+        role="switch"
+        id="flexSwitchCheckDefault"
+        (change)="permissionsService.changeSearchMode($event)"
+        [checked]="permissionsService.isSearchMode"
+      />
+      <label class="form-check-label" for="flexSwitchCheckDefault"
+        >Search Mode</label
+      >
+    </div>
+    {{ permissionsService.isSearchMode }}
     <table class="table table-hover">
       <thead>
         <tr>
-          
-
           <th scope="col">#</th>
           <th scope="col">Name</th>
           <th scope="col">Created At</th>
           <th scope="col">Updated At</th>
           <th *ngIf="selectedItems.length > 0" scope="col">
-          
             <input
               class="form-check-input"
               type="checkbox"
               value=""
               id="flexCheckChecked"
-              [checked]="selectedItems.length == permissionsService.permissions.length"
+              [checked]="
+                selectedItems.length == permissionsService.permissions.length
+              "
               (change)="onSelectAll($event)"
             />
-            <span> {{selectedItems.length}}</span>
+            <span> {{ selectedItems.length }}</span>
           </th>
         </tr>
       </thead>
@@ -48,9 +81,7 @@
           let-c="index"
         >
           <tr (click)="selectItem(item.permission_id)">
-           
-
-            <th scope="row">{{ c + 1}}</th>
+            <th scope="row">{{ c + 1 }}</th>
             <td>{{ item.permission_name }}</td>
             <td>{{ item.permission_created_at }}</td>
             <td>{{ item.permission_updated_at }}</td>
@@ -65,27 +96,150 @@
             </th>
           </tr>
         </ng-template>
-        
       </tbody>
-      
     </table>
     <div *ngIf="isLoadingMore; then thenBlock; else elseBlock"></div>
-        <ng-template #thenBlock>
-          <div class="spinner-border" role="status">
-            <span class="sr-only"></span>
-          </div>
-        </ng-template>
-        <ng-template #elseBlock>
-          <div *ngIf="isHaveMore; then thenBlock; else elseBlock"></div>
-          <ng-template #thenBlock
-            ><button class="btn btn-outline-primary me-2" (click)="readMore()">
-              <div>Load More</div>
-            </button>
-          </ng-template>
-          <ng-template #elseBlock> Last item </ng-template>
-        </ng-template>
+    <ng-template #thenBlock>
+      <div class="spinner-border" role="status">
+        <span class="sr-only"></span>
+      </div>
+    </ng-template>
+    <ng-template #elseBlock>
+      <div *ngIf="isHaveMore; then thenBlock; else elseBlock"></div>
+      <ng-template #thenBlock
+        ><button class="btn btn-outline-primary me-2" (click)="readMore()">
+          <div>Load More</div>
+        </button>
+      </ng-template>
+      <ng-template #elseBlock> Last item </ng-template>
+    </ng-template>
   </ng-template>
   <ng-template #elseBlock>
     {{ error }}
+  </ng-template>
+</ng-template> -->
+
+<div *ngIf="service.loadingRead; then thenBlock; else elseBlock"></div>
+<ng-template #thenBlock>
+  <div class="spinner-border" role="status">
+    <span class="sr-only"></span>
+  </div>
+</ng-template>
+<ng-template #elseBlock>
+  <div *ngIf="!service.statusRead; then thenBlock; else elseBlock"></div>
+  <ng-template #thenBlock>{{ service.readError }}</ng-template>
+  <ng-template #elseBlock>
+    <div class="modifier">
+      <div class="search">
+        <input type="text" class="form-control" placeholder="Search Here .." />
+        <button type="submit" class="btn btn-primary">
+          <i class="bi bi-search"></i>
+        </button>
+      </div>
+      <div class="search"></div>
+
+      <div class="crud">
+        <button
+          *ngIf="service.selectedItems.length == 1"
+          class="button-modifier"
+        >
+          <i class="bi bi-book"></i>
+        </button>
+        <button class="button-modifier">
+          <i class="bi bi-plus-circle"></i>
+        </button>
+        <button
+          *ngIf="service.selectedItems.length == 1"
+          class="button-modifier"
+        >
+          <i class="bi bi-pen"></i>
+        </button>
+        <button
+          *ngIf="service.selectedItems.length > 0"
+          class="button-modifier"
+        >
+          <i class="bi bi-trash"></i>
+        </button>
+      </div>
+    </div>
+    <!--  -->
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Name</th>
+          <th scope="col">Created At</th>
+          <th scope="col">Updated At</th>
+          <th *ngIf="service.selectedItems.length > 0" scope="col">
+            <input
+              class="form-check-input"
+              type="checkbox"
+              value=""
+              id="flexCheckChecked"
+              [checked]="
+                service.selectedItems.length == service.permissions.length
+              "
+              (change)="service.onSelectAll($event)"
+            />
+            <span> {{ service.selectedItems.length }}</span>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <div
+          *ngIf="
+            service.permissions.length == 0;
+            then thenBlock;
+            else elseBlock
+          "
+        ></div>
+        <ng-template #thenBlock>Empty Data</ng-template>
+        <ng-template #elseBlock>
+          <ng-template
+            ngFor
+            let-item
+            [ngForOf]="service.permissions"
+            let-c="index"
+          >
+            <tr (click)="service.selectItem(item.permission_id)">
+              <th scope="row">{{ c + 1 }}</th>
+              <td>{{ item.permission_name }}</td>
+              <td>{{ item.permission_created_at }}</td>
+              <td>{{ item.permission_updated_at }}</td>
+              <th *ngIf="service.selectedItems.length > 0" scope="row">
+                <input
+                  class="form-check-input"
+                  type="checkbox"
+                  value=""
+                  id="flexCheckChecked"
+                  [checked]="service.selectedItems.includes(item.permission_id)"
+                />
+              </th>
+            </tr>
+          </ng-template>
+        </ng-template>
+      </tbody>
+    </table>
+     <!--  -->
+     <div style="text-align: center;">
+     <div *ngIf="!service.isHaveReadMore; then thenBlock1; else elseBlock1"></div>
+     
+     <ng-template #thenBlock1>
+        <div style="background-color: aqua">NO more item</div>
+     </ng-template>
+     <ng-template #elseBlock1>
+      
+      <div style="background-color: red;">{{service.readMoreError}}</div>
+     
+      <div *ngIf="service.loadingReadMore"class="spinner-border" role="status">
+        <span class="sr-only"></span>
+      </div>
+      
+         <button *ngIf="!service.loadingReadMore" class="btn btn-outline-primary me-2" (click)="service.readMore()">
+        <div>Load More</div>
+      </button>
+      
+      </ng-template>
+    </div>
   </ng-template>
 </ng-template>

@@ -49,28 +49,28 @@ export class GroupsComponent {
     this.router.navigate(['/dashboard/groups/permissions-group']);
   }
 
-  ngOnInit() {
-    this.groupService.read().subscribe({
-      next: (response) => {
-        this.status = true;
-        this.groups = response
-        console.log(response);
+  // ngOnInit() {
+  //   this.groupService.read().subscribe({
+  //     next: (response) => {
+  //       this.status = true;
+  //       this.groups = response
+  //       console.log(response);
 
-      },
-      error: (err) => {
-        this.error = err.error.message.ar
-        this.status = false;
-        this.isLoading = false;
-        this.permissionsService.deleteId()
+  //     },
+  //     error: (err) => {
+  //       this.error = err.error.message.ar
+  //       this.status = false;
+  //       this.isLoading = false;
+  //       this.permissionsService.deleteId()
         
-      }
-      ,
-      complete: () => {
-        this.isLoading = false;
-        this.permissionsService.deleteId()
-      }
+  //     }
+  //     ,
+  //     complete: () => {
+  //       this.isLoading = false;
+  //       this.permissionsService.deleteId()
+  //     }
       
-    })
-  }
+  //   })
+  // }
 
 }
