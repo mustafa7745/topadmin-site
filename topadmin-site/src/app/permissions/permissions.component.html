@@ -130,37 +130,37 @@
   <ng-template #thenBlock>{{ service.readError }}</ng-template>
   <ng-template #elseBlock>
     <div class="modifier">
-      <div class="search">
-        <input type="text" class="form-control" placeholder="Search Here .." />
-        <button type="submit" class="btn btn-primary">
+      <div *ngIf="service.searchMode" class="search">
+        <input type="text" class="form-control" placeholder="Search Here .." [(ngModel)]="service.searchText" />
+        <button *ngIf="!service.loadingSearch" type="submit" class="btn btn-primary" [disabled]="service.isDisabledSearchButton()"
+          (click)="service.search()">
           <i class="bi bi-search"></i>
         </button>
+        <button *ngIf="service.loadingSearch" class="btn btn-primary" type="button" disabled>
+          <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        </button>
       </div>
-      <div class="search"></div>
+      <div  *ngIf="!service.searchMode" class="search"></div>
 
       <div class="crud">
-        <button
-          *ngIf="service.selectedItems.length == 1"
-          class="button-modifier"
-        >
+        <button *ngIf="service.selectedItems.length == 1" class="button-modifier">
           <i class="bi bi-book"></i>
         </button>
-        <button class="button-modifier">
+        <button class="button-modifier" (click)="service.openAddModal()">
           <i class="bi bi-plus-circle"></i>
         </button>
-        <button
-          *ngIf="service.selectedItems.length == 1"
-          class="button-modifier"
-        >
-          <i class="bi bi-pen"></i>
-        </button>
-        <button
-          *ngIf="service.selectedItems.length > 0"
-          class="button-modifier"
-        >
+       
+        <button *ngIf="service.selectedItems.length > 0" class="button-modifier" (click) = "service.deletecConfirm()">
           <i class="bi bi-trash"></i>
         </button>
       </div>
+    </div>
+    <!--  -->
+   <div *ngIf="service.searchMode" style="background-color: red;">{{service.searchError}}</div> 
+    <div class="form-check form-switch">
+      <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault"
+        (change)="service.changeSearchMode($event)" [checked]="service.searchMode" />
+      <label class="form-check-label" for="flexSwitchCheckDefault">Search Mode</label>
     </div>
     <!--  -->
     <table class="table table-hover">
@@ -171,75 +171,78 @@
           <th scope="col">Created At</th>
           <th scope="col">Updated At</th>
           <th *ngIf="service.selectedItems.length > 0" scope="col">
-            <input
-              class="form-check-input"
-              type="checkbox"
-              value=""
-              id="flexCheckChecked"
-              [checked]="
+            <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" [checked]="
                 service.selectedItems.length == service.permissions.length
-              "
-              (change)="service.onSelectAll($event)"
-            />
+              " (change)="service.onSelectAll($event)" />
             <span> {{ service.selectedItems.length }}</span>
           </th>
         </tr>
       </thead>
       <tbody>
-        <div
-          *ngIf="
+        <div *ngIf="
             service.permissions.length == 0;
             then thenBlock;
             else elseBlock
-          "
-        ></div>
-        <ng-template #thenBlock>Empty Data</ng-template>
+          "></div>
+        <ng-template #thenBlock>..</ng-template>
         <ng-template #elseBlock>
-          <ng-template
-            ngFor
-            let-item
-            [ngForOf]="service.permissions"
-            let-c="index"
-          >
-            <tr (click)="service.selectItem(item.permission_id)">
-              <th scope="row">{{ c + 1 }}</th>
-              <td>{{ item.permission_name }}</td>
+          <ng-template ngFor let-item [ngForOf]="service.permissions" let-c="index">
+            <tr >
+              <th (click)="service.selectItem(item.permission_id)" style="cursor: pointer;" scope="row">{{ c + 1 }}</th>
+              <td>{{ item.permission_name }}
+                <button class="button-modifier">
+                  <i class="bi bi-pen"></i>
+                </button>
+              </td>
               <td>{{ item.permission_created_at }}</td>
               <td>{{ item.permission_updated_at }}</td>
               <th *ngIf="service.selectedItems.length > 0" scope="row">
-                <input
-                  class="form-check-input"
-                  type="checkbox"
-                  value=""
-                  id="flexCheckChecked"
-                  [checked]="service.selectedItems.includes(item.permission_id)"
-                />
+                <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked"
+                  [checked]="service.selectedItems.includes(item.permission_id)" />
               </th>
             </tr>
           </ng-template>
         </ng-template>
       </tbody>
     </table>
-     <!--  -->
-     <div style="text-align: center;">
-     <div *ngIf="!service.isHaveReadMore; then thenBlock1; else elseBlock1"></div>
-     
-     <ng-template #thenBlock1>
-        <div style="background-color: aqua">NO more item</div>
-     </ng-template>
-     <ng-template #elseBlock1>
-      
-      <div style="background-color: red;">{{service.readMoreError}}</div>
-     
-      <div *ngIf="service.loadingReadMore"class="spinner-border" role="status">
-        <span class="sr-only"></span>
+    <!--  -->
+    <div style="text-align: center;">
+      <div *ngIf="!service.searchMode">
+        <div *ngIf="!service.isHaveReadMore; then thenBlock1; else elseBlock1"></div>
+        <ng-template #thenBlock1>
+          <div style="background-color: aqua">..</div>
+        </ng-template>
+        <ng-template #elseBlock1>
+
+          <div style="background-color: red;">{{service.readMoreError}}</div>
+
+          <div *ngIf="service.loadingReadMore" class="spinner-border" role="status">
+            <span class="sr-only"></span>
+          </div>
+
+          <button *ngIf="!service.loadingReadMore" class="btn btn-outline-primary me-2" (click)="service.readMore()">
+            <div>Load More</div>
+          </button>
+        </ng-template>
       </div>
-      
-         <button *ngIf="!service.loadingReadMore" class="btn btn-outline-primary me-2" (click)="service.readMore()">
-        <div>Load More</div>
-      </button>
-      
-      </ng-template>
+      <div *ngIf="service.searchMode">
+        <div *ngIf="!service.isHaveSearchMore; then thenBlock2; else elseBlock2"></div>
+        <ng-template #thenBlock2>
+          <div style="background-color: aqua">..</div>
+        </ng-template>
+        <ng-template #elseBlock2>
+
+          <div style="background-color: red;">{{service.searchMoreError}}</div>
+
+          <div *ngIf="service.loadingSearchMore" class="spinner-border" role="status">
+            <span class="sr-only"></span>
+          </div>
+
+          <button *ngIf="!service.loadingSearchMore" class="btn btn-outline-primary me-2" (click)="service.searchMore()">
+            <div>Load More</div>
+          </button>
+        </ng-template>
+      </div>
     </div>
   </ng-template>
 </ng-template>

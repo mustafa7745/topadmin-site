@@ -12,10 +12,12 @@ import { SuccessInfoModal } from "../CBootstrap/modal/success-info/successinfo-m
   imports: [NgbDropdownModule, CommonModule, FormsModule],
   templateUrl: "./add-permissions.component.html",
 })
-export class ModalAddPermission {
+export class ModalUpdatePermissionName {
   constructor(private permissionService: PermissionsService) {
 
   }
+
+  
   activeModal = inject(NgbActiveModal);
   modal = inject(NgbModal);
   newName = ''

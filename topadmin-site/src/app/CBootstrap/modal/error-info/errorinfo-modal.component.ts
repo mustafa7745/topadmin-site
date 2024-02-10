@@ -4,11 +4,10 @@ import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
 @Component({
   selector: 'ngbd-modal-confirm',
   standalone: true,
-  templateUrl:'./successinfo-modal.component.html',
-  
-  styleUrl: './successinfo-modal.component.css',
+  templateUrl:'./errorinfo-modal.component.html',
+  styleUrl: './errorinfo-modal.component.css',
 })
-export class SuccessInfoModal {
+export class ErrorInfoModal {
   result = ''
   modal = inject(NgbActiveModal);
   onOk(){
