@@ -23,17 +23,9 @@ export class PermissionsComponent {
 
 
 
-  isLoading = true;
-  status = false;
-  error = '';
-  //
-  isHaveMore = false;
-  isLoadingMore = false;
-  // 
-  constructor(public service: PermissionsService, private globalService: GlobalService) { }
-  p() {
-    this.service.loadingRead
-  }
+ 
+  constructor(public service: PermissionsService) { }
+
   ngOnInit() {
     this.service.read()
   }

@@ -10,7 +10,7 @@ import { SuccessInfoModal } from "../CBootstrap/modal/success-info/successinfo-m
   selector: 'ngbd-modal-confirm',
   standalone: true,
   imports: [NgbDropdownModule, CommonModule, FormsModule],
-  templateUrl: "./add-permissions.component.html",
+  templateUrl: "./update-permissions.component.html",
 })
 export class ModalUpdatePermissionName {
   constructor(private permissionService: PermissionsService) {
@@ -20,14 +20,23 @@ export class ModalUpdatePermissionName {
   
   activeModal = inject(NgbActiveModal);
   modal = inject(NgbModal);
+  id:any
   newName = ''
+  preName = ''
   isDisabledSaveButton() {
-    return !(this.newName.length > 0)
+    if (!(this.newName.length > 0)) {
+      return true
+    }
+    if (this.newName == this.preName) {
+      return true
+    }
+    return  false 
   }
 
   onSave() {
+    
     this.permissionService
-      .add(this.newName,this.activeModal)
+      .updateName(this.newName,this.id,this.activeModal)
   }
   
 }

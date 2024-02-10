@@ -2,7 +2,7 @@ import { Component, inject } from "@angular/core";
 import { NgbActiveModal } from "@ng-bootstrap/ng-bootstrap";
 
 @Component({
-  selector: 'ngbd-modal-confirm',
+  selector: 'ngbd-error-modal',
   standalone: true,
   templateUrl:'./errorinfo-modal.component.html',
   styleUrl: './errorinfo-modal.component.css',

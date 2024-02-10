@@ -1,14 +1,17 @@
 <div class="modal-header">
   <h4 class="modal-title" id="modal-title">
-    Add New Permission
+    Update Permission Name
   </h4>
   <button type="button" class="btn-close" aria-describedby="modal-title"
     (click)="activeModal.dismiss('Cross click')"></button>
 </div>
 <div class="modal-body">
   <div class="row">
-    <div class="col">
-      <input type="text" class="form-control"  placeholder="Search Here .." [(ngModel)] = "newName">
+    <div class="row">
+      <input type="text" class="form-control"  placeholder="New Name" [(ngModel)] = "preName" disabled>
+    </div>
+    <div class="row">
+      <input type="text" class="form-control"  placeholder="New Name" [(ngModel)] = "newName">
     </div>
   </div>
 </div>

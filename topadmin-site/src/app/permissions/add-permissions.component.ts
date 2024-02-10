@@ -11,6 +11,7 @@ import { SuccessInfoModal } from "../CBootstrap/modal/success-info/successinfo-m
   standalone: true,
   imports: [NgbDropdownModule, CommonModule, FormsModule],
   templateUrl: "./add-permissions.component.html",
+  
 })
 export class ModalAddPermission {
   constructor(private permissionService: PermissionsService) {

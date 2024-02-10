@@ -11,15 +11,22 @@ import { LoadingModal } from '../CBootstrap/modal/loading/loading-modal.componen
 import { SuccessInfoModal } from '../CBootstrap/modal/success-info/successinfo-modal.component';
 import { ErrorInfoModal } from '../CBootstrap/modal/error-info/errorinfo-modal.component';
 import { ModalAddPermission } from '../permissions/add-permissions.component';
+import { ModalUpdatePermissionName } from '../permissions/update-permissions.component';
 
 @Injectable({
   providedIn: 'root',
 })
 export class PermissionsService {
+  constructor(
+    private loginService: LoginService,
+    private globalService: GlobalService
+  ) { }
+  modalService = inject(NgbModal);
   // urls
   urlRead = 'user/permissions/read.php';
   urlAdd = 'user/permissions/add.php';
   urlDelete = 'user/permissions/delete.php';
+  urlUpdate = 'user/permissions/edit.php';
   // list
   permissions: Permission[] = [];
   selectedItems: string[] = [];
@@ -34,8 +41,6 @@ export class PermissionsService {
   readMoreError = '';
   searchMoreError = ''
   searchError = '';
-  addError = '';
-  deleteError = '';
   //
   isHaveReadMore = false
   isHaveSearchMore = false
@@ -60,13 +65,6 @@ export class PermissionsService {
     }
   }
   //
-  id: any;
-
-  constructor(
-    private loginService: LoginService,
-    private globalService: GlobalService
-  ) { }
-
   search() {
     this.searchError = ''
     this.loadingSearch = true;
@@ -127,8 +125,10 @@ export class PermissionsService {
     });
 
   }
-
+  // 
   read() {
+    console.log("esmail");
+    
     this.readError = ''
     this.loadingRead = true;
     const data = JSON.stringify({ TAG: 'READ', FROM: '0' });
@@ -181,7 +181,7 @@ export class PermissionsService {
       },
     });
   }
-
+  // 
   selectItem(id: string) {
     const index = this.selectedItems.findIndex((el) => el === id);
     if (index > -1) {
@@ -198,53 +198,7 @@ export class PermissionsService {
       this.selectedItems = [];
     }
   }
-
-
-  // sendRequest(data: any, url: string, isLoadMore: Boolean = false){
-  //   //
-  //   // const data = {
-  //   //   TAG: 'READ',
-  //   //   FROM: '0',
-  //   // };
-  //   if (
-  //     data['TAG'] === 'READ' ||
-  //     data['TAG'] === 'SEARCH' ||
-  //     data['TAG'] === 'ADD' ||
-  //     data['TAG'] === 'DELETE'
-  //   ) {
-  //     this.loginService.getFormData().set('data', JSON.stringify(data));
-  //     this.request(this.loginService.getFormData(), this.urlRead).subscribe({
-  //       next: (response) => {
-  //         if (isLoadMore) {
-  //           if (data['TAG'] === 'READ') {
-  //             this.permissions = this.permissions.concat(response);
-  //           } else if (data['TAG'] === 'SEARCH') {
-  //             this.permissions = this.permissions.concat(response);
-  //           }
-  //         } else {
-  //           if (data['TAG'] === 'READ') {
-  //             this.permissions = response;
-  //           } else if (data['TAG'] === 'SEARCH') {
-  //             this.permissions = response;
-  //           }
-  //         }
-  //       },
-  //       error: (err) => {
-  //         this.readError = this.errorMessage(err);
-  //       },
-  //       complete: () => {},
-  //     });
-  //   }
-  //   else
-  //   return this.funService.UNKOWN_TAG()
-  // }
-  // errorMessage(err: any): string {
-  //   if (err.status === 400) {
-  //     return err.error.message.ar;
-  //   } else {
-  //     return 'UN Error';
-  //   }
-  // }
+  // 
   add(name: string,modal:any){
     const data = JSON.stringify({ TAG: 'ADD', PERMISSION_NAME: name, });
     var formData = this.loginService.getFormData();
@@ -264,7 +218,54 @@ export class PermissionsService {
           centered: true,
         });
         successModal.componentInstance.result = "Add Done"
-        modal.close()
+        modal.close();
+        console.log("mustafa");
+        
+        this.read()
+      },
+      error: (err) => {
+        const errorModal = this.modalService.open(ErrorInfoModal, {
+          keyboard: false,
+          backdrop: 'static',
+          centered: true,
+        });
+        errorModal.componentInstance.result = this.globalService.errorMessage(err);
+        loadingModal.close()
+       
+      
+      },
+    });
+  }
+  // 
+  updateName(name: string,id:string,modal:any){
+    const data = JSON.stringify({ TAG: 'EDIT', ID:id, PERMISSION_NAME: name, });
+    var formData = this.loginService.getFormData();
+    formData.set('data', data);
+    // 
+    const loadingModal = this.modalService.open(LoadingModal, {
+      keyboard: false,
+      backdrop: 'static',
+      centered: true,
+    });
+    this.globalService.request(formData, this.urlUpdate).subscribe({
+      next: (response) => {
+        loadingModal.close()
+        const successModal = this.modalService.open(SuccessInfoModal, {
+          keyboard: false,
+          backdrop: 'static',
+          centered: true,
+        });
+        successModal.componentInstance.result = "Update Done"
+        modal.close();
+        
+          const index = this.permissions.findIndex(
+            (obj) => obj.permission_id === id
+          );
+          
+          if (index > -1) {
+            this.permissions[index].permission_name = name
+          }
+       
       },
       error: (err) => {
         const errorModal = this.modalService.open(ErrorInfoModal, {
@@ -280,64 +281,7 @@ export class PermissionsService {
     });
   
   }
-  // searchNative(search: string): Observable<Permission[]> {
-  //   const data = JSON.stringify({
-  //     TAG: 'SEARCH',
-  //     SEARCH_BY: 'NAME',
-  //     SEARCH: search,
-  //     FROM: '0',
-  //   });
-  //   const url = 'user/permissions/read.php';
-  //   this.request(
-  //     data,
-  //     url,
-  //     () => {
-  //       n: (re) => {};
-  //     },
-  //     () => {}
-  //   );
-  // }
-  // readMore(): Observable<Permission[]> {
-  //   const s = JSON.stringify({
-  //     TAG: 'READ',
-  //     FROM: this.permissions.length,
-  //   });
-  //   this.formData.append('data', s);
-  //   return this.apiService.http.post<Permission[]>(
-  //     this.apiService.apiUrl + 'user/permissions/read.php',
-  //     this.formData
-  //   );
-  // }
-  // search(search: any, group_id: any): Observable<Permission[]> {
-  //   const s = JSON.stringify({
-  //     TAG: 'SEARCH',
-  //     SEARCH_BY: 'NAME',
-  //     SEARCH: search,
-  //     CAUSE: 'ADD_TO_PG',
-  //     G_ID: group_id,
-  //     FROM: '0',
-  //   });
-
-  //   this.formData.append('data', s);
-  //   console.log(s);
-  //   console.log(this.formData);
-  //   return this.apiService.http.post<Permission[]>(
-  //     this.apiService.apiUrl + 'user/permissions/read.php',
-  //     this.formData
-  //   );
-  // }
-  // addIdFormData() {
-  //   // console.log(this.formData);
-  //   this.formData.append('id', this.id);
-
-  //   console.log(this.formData.get('user_phone'));
-  //   console.log(this.formData.get('id'));
-  // }
-  // deleteId() {
-  //   this.formData.delete('id');
-  //   this.id = undefined;
-  // }
-  modalService = inject(NgbModal);
+  // 
   deletecConfirm() {
     const a = this.modalService.open(ConfirmModal, {
       keyboard: false,
@@ -406,13 +350,24 @@ export class PermissionsService {
     });
 
   }
-
+  // 
   openAddModal(){
     const a = this.modalService.open(ModalAddPermission, {
       keyboard: false,
       backdrop: 'static',
       centered: true,
     });
+
+  }
+  openUpdateNameModal(id:string,name:string){
+    const a = this.modalService.open(ModalUpdatePermissionName, {
+      keyboard: false,
+      backdrop: 'static',
+      centered: true,
+    });
+    a.componentInstance.id = id;
+    a.componentInstance.preName = name
+    a.componentInstance.newName = name
 
   }
 }

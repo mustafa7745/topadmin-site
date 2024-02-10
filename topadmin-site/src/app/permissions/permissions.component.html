@@ -190,7 +190,7 @@
             <tr >
               <th (click)="service.selectItem(item.permission_id)" style="cursor: pointer;" scope="row">{{ c + 1 }}</th>
               <td>{{ item.permission_name }}
-                <button class="button-modifier">
+                <button class="button-modifier" (click)="service.openUpdateNameModal(item.permission_id,item.permission_name)">
                   <i class="bi bi-pen"></i>
                 </button>
               </td>
