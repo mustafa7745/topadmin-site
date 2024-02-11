@@ -50,11 +50,38 @@ export class PermissionsService {
   // 
   searchMode = false
   searchText = ''
+  emptySearchData = ''
+
+  reset(){
+    this.permissions= []
+    this.selectedItems = []
+    // 
+    this.loadingRead = false
+    this.loadingReadMore =false
+    this.loadingSearch = false
+    this.loadingSearchMore = false
+    // 
+    this.readError = '';
+    this.readMoreError = '';
+    this.searchMoreError = ''
+    this.searchError = '';
+    // 
+    this.isHaveReadMore = false
+    this.isHaveSearchMore = false
+    // 
+    this.statusRead = false
+    this.statusReadMore = false
+    // 
+    this.searchMode = false
+    this.searchText = ''
+  }
 
   isDisabledSearchButton() {
     return !(this.searchText.length > 0);
   }
   changeSearchMode(event: any) {
+    this.permissions = []
+    this.isHaveSearchMore = false
     this.searchMode = event.target.checked;
     if (event.target.checked) {
       this.searchText = '';
@@ -66,8 +93,11 @@ export class PermissionsService {
   }
   //
   search() {
+    this.permissions = []
+    this.emptySearchData = ''
     this.searchError = ''
     this.loadingSearch = true;
+    this.isHaveSearchMore = false;
     const data = JSON.stringify({
       TAG: 'SEARCH',
       SEARCH_BY: 'NAME',
@@ -79,15 +109,19 @@ export class PermissionsService {
     //
     this.globalService.request(formData, this.urlRead).subscribe({
       next: (response) => {
-        this.permissions = response;
-        this.loadingSearch = false;
-        // this.statusRead = true;
+        if (response.length === 0) {
+          this.emptySearchData = "No Data Found"
+        }else{
+          this.permissions = response;
+       
         if (response.length == 3) {
           this.isHaveSearchMore = true;
         } else {
           this.isHaveSearchMore = false;
         }
-        this.loadingSearch = false;
+      
+        }
+         this.loadingSearch = false;
       },
       error: (err) => {
         this.searchError = this.globalService.errorMessage(err);
@@ -127,8 +161,6 @@ export class PermissionsService {
   }
   // 
   read() {
-    console.log("esmail");
-    
     this.readError = ''
     this.loadingRead = true;
     const data = JSON.stringify({ TAG: 'READ', FROM: '0' });
@@ -321,6 +353,7 @@ export class PermissionsService {
 
     this.globalService.request(formData, this.urlDelete).subscribe({
       next: (response) => {
+       
         loadingModal.close()
         const successModal = this.modalService.open(SuccessInfoModal, {
           keyboard: false,
@@ -336,6 +369,7 @@ export class PermissionsService {
             this.permissions.splice(index, 1);
           }
         });
+        this.selectedItems = []
        
       },
       error: (err) => {
@@ -368,7 +402,6 @@ export class PermissionsService {
     a.componentInstance.id = id;
     a.componentInstance.preName = name
     a.componentInstance.newName = name
-
   }
 }
 export interface Permission {

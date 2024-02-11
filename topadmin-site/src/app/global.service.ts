@@ -17,9 +17,15 @@ export class GlobalService {
     return req;
   }
     errorMessage(err: any): string {
+      // console.log(err);
+      
     if (err.status === 400) {
       return err.error.message.ar;
-    } else {
+    } 
+    if (err.status === 404) {
+      return "Request not found";
+    } 
+    else {
       return 'UN Error';
     }
   }

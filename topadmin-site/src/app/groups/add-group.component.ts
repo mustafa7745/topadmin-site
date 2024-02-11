@@ -2,19 +2,17 @@ import { CommonModule } from "@angular/common";
 import { Component, inject } from "@angular/core";
 import { FormsModule } from "@angular/forms";
 import { NgbDropdownModule, NgbActiveModal, NgbModal } from "@ng-bootstrap/ng-bootstrap";
-import { PermissionsService } from "../services/permissions.service";
-import { LoadingModal } from "../CBootstrap/modal/loading/loading-modal.component";
-import { SuccessInfoModal } from "../CBootstrap/modal/success-info/successinfo-modal.component";
+import { GroupsService } from "../services/groups.service";
 
 @Component({
   selector: 'ngbd-modal-add',
   standalone: true,
   imports: [NgbDropdownModule, CommonModule, FormsModule],
-  templateUrl: "./add-permissions.component.html"
+  templateUrl: "./add-group.component.html"
   
 })
-export class ModalAddPermission {
-  constructor(private permissionService: PermissionsService) {
+export class ModalAddGroup {
+  constructor(private service: GroupsService) {
 
   }
   activeModal = inject(NgbActiveModal);
@@ -25,7 +23,7 @@ export class ModalAddPermission {
   }
 
   onSave() {
-    this.permissionService
+    this.service
       .add(this.newName,this.activeModal)
   }
   

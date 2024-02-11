@@ -1,23 +1,129 @@
-<div *ngIf="isLoading; then thenBlock else elseBlock"></div>
-<ng-template #thenBlock>Loading...</ng-template>
-<ng-template #elseBlock>
-    <div *ngIf="status; then thenBlock else elseBlock"></div>
-    <ng-template #thenBlock>
-        <ng-template ngFor let-item [ngForOf]="groups" let-c="index">
-            <a class="group">{{item.group_name}}
-                {{item.group_created_at}}
-                <button (click)="goAppGroup(item.group_id)">
-                    التطبيقات
-                </button>
-                <button (click)="goPermissions(item.group_id)">
-                    صلاحيات المجموعة
-                </button>
-            </a>
-            
-        </ng-template>
-    </ng-template>
-    <ng-template #elseBlock>
-        {{error}}
-    </ng-template>
+<div *ngIf="service.loadingRead; then thenBlock; else elseBlock"></div>
+<ng-template #thenBlock>
+  <div style="text-align: center;">
+    <div  class="spinner-border" role="status">
+    <span class="sr-only"></span>
+  </div>
+  </div>
+  
 </ng-template>
-<router-outlet></router-outlet>
+<ng-template #elseBlock>
+  <div *ngIf="!service.statusRead; then thenBlock; else elseBlock"></div>
+  <ng-template #thenBlock>{{ service.readError }}</ng-template>
+  <ng-template #elseBlock>
+    <div class="modifier">
+      <div *ngIf="service.searchMode" class="search">
+        <input type="text" class="form-control" placeholder="Search Here .." [(ngModel)]="service.searchText" />
+        <button *ngIf="!service.loadingSearch" type="submit" class="btn btn-primary" [disabled]="service.isDisabledSearchButton()"
+          (click)="service.search()">
+          <i class="bi bi-search"></i>
+        </button>
+        <button *ngIf="service.loadingSearch" class="btn btn-primary" type="button" disabled>
+          <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+        </button>
+      </div>
+      <div  *ngIf="!service.searchMode" class="search"></div>
+
+      <div class="crud">
+        <button *ngIf="!service.searchMode" class="button-modifier" (click)="service.openAddModal()">
+          <i class="bi bi-plus-circle"></i>
+        </button>
+        <button *ngIf="service.selectedItems.length == 1" class="button-modifier">
+          <i class="bi bi-book"></i>
+        </button>
+       
+       
+        <button *ngIf="service.selectedItems.length > 0" class="button-modifier" (click) = "service.deletecConfirm()">
+          <i class="bi bi-trash"></i>
+        </button>
+      </div>
+    </div>
+    <!--  -->
+   <div *ngIf="service.searchMode" style="background-color: red;">{{service.searchError}}</div> 
+    <div class="form-check form-switch">
+      <input class="form-check-input" type="checkbox" role="switch" id="flexSwitchCheckDefault"
+        (change)="service.changeSearchMode($event)" [checked]="service.searchMode" />
+      <label class="form-check-label" for="flexSwitchCheckDefault">Search Mode</label>
+    </div>
+    <!--  -->
+    <table class="table table-hover">
+      <thead>
+        <tr>
+          <th scope="col">#</th>
+          <th scope="col">Name</th>
+          <th scope="col">Created At</th>
+          <th scope="col">Updated At</th>
+          <th *ngIf="service.selectedItems.length > 0" scope="col">
+            <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" [checked]="
+                service.selectedItems.length == service.list.length
+              " (change)="service.onSelectAll($event)" />
+            <span> {{ service.selectedItems.length }}</span>
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        <div *ngIf="
+            service.list.length == 0;
+            then thenBlock;
+            else elseBlock
+          "></div>
+        <ng-template #thenBlock>..</ng-template>
+        <ng-template #elseBlock>
+          <ng-template ngFor let-item [ngForOf]="service.list" let-c="index">
+            <tr >
+              <th (click)="service.selectItem(item.group_id)" style="cursor: pointer;" scope="row">{{ c + 1 }}</th>
+              <td>
+                 <button class="button-modifier" (click)="service.openUpdateNameModal(item.group_id,item.group_name)">
+                  <i class="bi bi-pen"></i>
+                </button>
+                {{ item.group_name }}
+              </td>
+              <td>{{ item.group_created_at }}</td>
+              <td>{{ item.group_updated_at }}</td>
+              <th *ngIf="service.selectedItems.length > 0" scope="row">
+                <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked"
+                  [checked]="service.selectedItems.includes(item.group_id)" />
+              </th>
+            </tr>
+          </ng-template>
+        </ng-template>
+      </tbody>
+    </table>
+    <!-- More Data -->
+    <div style="text-align: center;">
+      <!-- Normal Mode -->
+      <div *ngIf="!service.searchMode">
+        <div *ngIf="!service.isHaveReadMore; then thenBlock1; else elseBlock1"></div>
+        <ng-template #thenBlock1>
+          <div style="background-color: aqua">..</div>
+        </ng-template>
+        <ng-template #elseBlock1>
+          <div style="background-color: red;">{{service.readMoreError}}</div>
+          <div *ngIf="service.loadingReadMore" class="spinner-border" role="status">
+            <span class="sr-only"></span>
+          </div>
+          <button *ngIf="!service.loadingReadMore" class="btn btn-outline-primary me-2" (click)="service.readMore()">
+            <div>Load More</div>
+          </button>
+        </ng-template>
+      </div>
+      <!-- Search Mode -->
+      <div *ngIf="service.searchMode">
+        <div>{{service.emptySearchData}}</div>
+        <div *ngIf="!service.isHaveSearchMore; then thenBlock2; else elseBlock2"></div>
+        <ng-template #thenBlock2>
+          <div style="background-color: aqua">..</div>
+        </ng-template>
+        <ng-template #elseBlock2>
+          <div style="background-color: red;">{{service.searchMoreError}}</div>
+          <div *ngIf="service.loadingSearchMore" class="spinner-border" role="status">
+            <span class="sr-only"></span>
+          </div>
+          <button *ngIf="!service.loadingSearchMore" class="btn btn-outline-primary me-2" (click)="service.searchMore()">
+            <div>Load More</div>
+          </button>
+        </ng-template>
+      </div>
+    </div>
+  </ng-template>
+</ng-template>

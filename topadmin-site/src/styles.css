@@ -1,2 +1,32 @@
 /* You can add global styles to this file, and also import other style files */
 @import "bootstrap-icons/font/bootstrap-icons.css";
+.modifier{
+    display: flex;
+    height: 70px;
+    background-color: aquamarine;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+}
+.crud{
+    display: inline-flex;
+    height: 50px;
+    background-color: white;
+    justify-content: space-between;
+    width: 250px;
+    border-radius: 10px;
+    padding: 10px;
+    align-items: center;
+}
+.button-modifier{
+    border-radius: 20px;
+    height: 40px;
+    width: 40px 
+}
+.search{
+    display: flex;
+    background-color: white;
+    align-items: center;
+    padding: 5px;
+    border-radius: 10px;
+}
