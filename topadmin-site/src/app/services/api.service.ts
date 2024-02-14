@@ -1,4 +1,4 @@
-import { isPlatformBrowser } from '@angular/common';
+import { isPlatformBrowser, isPlatformServer } from '@angular/common';
 import { HttpClient } from '@angular/common/http';
 import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { info } from 'console';
@@ -16,19 +16,39 @@ export class ApiService {
     var did: any;
     if (isPlatformBrowser(this._platformId)) {
       did = this.initDeviceId();
-    }
-    const info = { name: 'edge' };
+      const info = { name: 'edge' };
     this.formData = new FormData();
-    this.formData.append('app_package_name', 'com.onemegasoft.topadminweb');
-    this.formData.append(
-      'sha',
-      '85:9D:B5:3A:2F:E9:87:B8:0C:74:35:3B:B6:4A:6C:F4:1B:26:66:BA:27:EF:97:87:B1:E2:A3:BA:45:25:86:97'
-    );
-    this.formData.append('app_version', '1');
-    this.formData.append('device_id', did);
-    this.formData.append('device_info', JSON.stringify(info));
-    this.formData.append('app_device_token', 'browserToken');
-    this.formData.append('device_type_name', 'browser');
+  //  this.formData = 
+    //
+    const data1 = {
+      app_package_name: 'com.onemegasoft.topadminweb',
+      sha:'sha2',
+      'app_version': '1',
+      'device_id': did,
+      'device_info':info,
+      'app_device_token': 'browserToken',
+      'device_type_name': 'browser'
+    }
+    // if (did != undefined) {
+      this.formData.append('data1', JSON.stringify(data1));
+    
+    } 
+    
+    // }
+  
+//     if (isPlatformServer(this._platformId)) {
+// console.log("mustafa Esmail");
+
+//     }
+    // this.formData.append(
+    //   'sha',
+    //   'sha1'
+    // );
+    // this.formData.append('app_version', '1');
+    // this.formData.append('device_id', did);
+    // this.formData.append('device_info', JSON.stringify(info));
+    // this.formData.append('app_device_token', 'browserToken');
+    // this.formData.append('device_type_name', 'browser');
   }
   initDeviceId(): string {
     const device_id = 'did';

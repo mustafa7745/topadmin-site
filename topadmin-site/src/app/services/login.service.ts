@@ -30,11 +30,16 @@ export class LoginService {
     }
     return '';
   }
-  getFormData():FormData{
-    this.apiService.formData.append('user_phone', this.getPhone());
-    this.apiService.formData.append('user_password', this.getPassword());
-    this.apiService.formData.append('data', '{}');
+  getFormData():any{
+    // this.apiService.formData.append('user_phone', this.getPhone());
+    // this.apiService.formData.append('user_password', this.getPassword());
+    // this.apiService.formData.append('data', '{}');
+    if (isPlatformBrowser(this._platformId)){
+      const data2 = {'user_phone': this.getPhone(),'user_password': this.getPassword()}
+    this.apiService.formData.append('data2', JSON.stringify(data2));
     return this.apiService.formData;
+    }
+    
   }
   constructor(
     @Inject(PLATFORM_ID) private _platformId: Object,
@@ -66,9 +71,10 @@ export class LoginService {
     }
   }
   checkUser( phone: string, password: string): Observable<any> {
-    this.apiService.formData.append('user_phone', phone);
-    this.apiService.formData.append('user_password', password);
-    this.apiService.formData.append('data', '{}');
+    const data2 = {'user_phone': phone,'user_password': password}
+    this.apiService.formData.append('data2', JSON.stringify(data2));
+    // this.apiService.formData.append('user_password', password);
+    // this.apiService.formData.append('data', '{}');
     //
     return this.apiService.sendHttpPost('user/login.php',this.apiService.formData);
   }

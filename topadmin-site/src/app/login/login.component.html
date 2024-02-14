@@ -1,11 +1,4 @@
-<!-- <form action="" method="post">
-    <input [ngModel]="name" (ngModelChange)="setUppercaseName($event)">
-    <br>
-    <input type="password" placeholder="user password">
-    <br>
-    <input type="submit">
-    {{name}}
-</form> -->
+<!-- 
 {{error}}
 <br>
 <input [(ngModel)]="phone">
@@ -14,17 +7,46 @@
 <br>
 <p>Value: {{ phone }}</p>
 <p>Value: {{ password }}</p>
-<!-- <p>Valid: {{ ctrl.valid }}</p> -->
 
 <div *ngIf="isLoading; then thenBlock else elseBlock"></div>
 <ng-template #thenBlock>Loading...</ng-template>
 <ng-template #elseBlock>
     <button (click)="login()">Login</button>
-</ng-template>
+</ng-template> -->
+<div class="limiter">
+    <div class="container-login100">
+        <div class="wrap-login100">
+            <div class="login100-form validate-form">
+                <div *ngIf="error.length>0" class="alert alert-danger" role="alert">
+                    {{error}}
+                  </div>
+                <span class="login100-form-title p-b-26">
+                    Welcome
+                </span>
+                <span class="login100-form-title p-b-48">
+                    <i class="zmdi zmdi-font"></i>
+                </span>
 
+                <div class="wrap-input100" >
+                    <input [(ngModel)]="phone" class="input100" type="text" placeholder="Phone">
+                </div>
 
-<!-- <div>
-    <button type="button" (click)="dec()" title="smaller">-</button>
-    <button type="button" (click)="inc()" title="bigger">+</button>
-    <span [style.font-size.px]="size">FontSize: {{size}}px</span>
-  </div> -->
+                <div class="wrap-input100" >
+                    <input [(ngModel)]="password" class="input100" type="password" placeholder="Password">
+                </div>
+
+                <div class="container-login100-form-btn">
+                    <div class="wrap-login100-form-btn">
+                        <div class="login100-form-bgbtn"></div>
+                        <button *ngIf="validateInput()" class="login100-form-btn" (click)="login()">
+                            Login
+                        </button>
+                        <div *ngIf="isLoading" class="login100-form-btn">
+                            <span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

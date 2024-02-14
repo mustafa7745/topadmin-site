@@ -32,8 +32,17 @@ export class LoginComponent {
      }
   }
   
-  phone: string = '967';
+  phone: string = '';
   password: string = '';
+
+  validateInput():boolean{
+    if (this.phone.length == 9 && this.isNumber(this.phone) && this.password.length > 4 && !this.isLoading) {
+      return true
+    }
+    else{
+      return false;
+    }
+  }
 
   login() {
     const phone = this.phone
@@ -42,12 +51,14 @@ export class LoginComponent {
     this.isLoading = true
     this.error = ''
 
-    this.loginService.checkUser(phone,password).subscribe({
+    this.loginService.checkUser('967'+phone,password).subscribe({
       next:(response)=>{
-        this.loginService.setLogin(phone,password)
-        this.router.navigate(['/dashboard']);
+        this.loginService.setLogin('967'+phone,password)
+        this.router.navigate(['/dashboard'],{ replaceUrl: true });
       },
       error:(err)=>{
+        console.log(err);
+        
         if ( err.status === 400) {
           this.error = err.error.message.ar
         }
@@ -62,6 +73,12 @@ export class LoginComponent {
       }
      })
   }
+  isNumber(value?: string | number): boolean
+{
+   return ((value != null) &&
+           (value !== '') &&
+           !isNaN(Number(value.toString())));
+}
 
  
 }

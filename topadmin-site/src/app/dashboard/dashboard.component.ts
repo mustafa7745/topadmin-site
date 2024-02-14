@@ -48,7 +48,7 @@ export class DashboardComponent{
           error: (err) => {
             if (err.status === 400) {
               this.loginService.removeUser();
-              this.router.navigate(['/login']);
+              this.router.navigate(['/login'],{ replaceUrl: true });
             } else {
               alert('error');
             }
@@ -59,7 +59,7 @@ export class DashboardComponent{
 
       this.phone = this.loginService.getPhone();
     } else {
-      this.router.navigate(['/login']);
+      this.router.navigate(['/login'],{ replaceUrl: true });
     }
   }
 }

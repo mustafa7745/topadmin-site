@@ -1,4 +1,4 @@
-import { Injectable, inject } from '@angular/core';
+import { Inject, Injectable, PLATFORM_ID, inject } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiService } from './api.service';
 import { App } from './apps.service';
@@ -12,6 +12,7 @@ import { SuccessInfoModal } from '../CBootstrap/modal/success-info/successinfo-m
 import { ErrorInfoModal } from '../CBootstrap/modal/error-info/errorinfo-modal.component';
 import { ModalAddPermission } from '../permissions/add-permissions.component';
 import { ModalUpdatePermissionName } from '../permissions/update-permissions.component';
+import { isPlatformBrowser } from '@angular/common';
 
 @Injectable({
   providedIn: 'root',
@@ -19,7 +20,8 @@ import { ModalUpdatePermissionName } from '../permissions/update-permissions.com
 export class PermissionsService {
   constructor(
     private loginService: LoginService,
-    private globalService: GlobalService
+    private globalService: GlobalService,
+    @Inject(PLATFORM_ID) private _platformId: Object
   ) { }
   modalService = inject(NgbModal);
   // urls
@@ -105,7 +107,7 @@ export class PermissionsService {
       FROM: "0"
     });
     var formData = this.loginService.getFormData();
-    formData.set('data', data);
+    formData.append('data3', data);
     //
     this.globalService.request(formData, this.urlRead).subscribe({
       next: (response) => {
@@ -161,11 +163,12 @@ export class PermissionsService {
   }
   // 
   read() {
+   
     this.readError = ''
     this.loadingRead = true;
-    const data = JSON.stringify({ TAG: 'READ', FROM: '0' });
+    const data = JSON.stringify({ tag: 'read', from: '0' });
     var formData = this.loginService.getFormData();
-    formData.set('data', data);
+    formData.append('data3', data);
     //
     this.globalService.request(formData, this.urlRead).subscribe({
       next: (response) => {

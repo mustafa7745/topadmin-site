@@ -12,8 +12,7 @@ import { PermissionsGroupsComponent } from './permissions-groups/permissions-gro
 import { RsaComponent } from './rsa/rsa.component';
 
 export const routes: Routes = [
-  { path: 'init', component: InitComponent },
-  { path: '', redirectTo: 'init', pathMatch: 'full' },
+  { path: '', component: InitComponent },
   { path: 'login', component: LoginComponent },
   {
     path: 'dashboard',

@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Inject, Injectable, PLATFORM_ID } from '@angular/core';
 import { Observable } from 'rxjs';
 import { ApiService } from './services/api.service';
 import { FunService } from './fun.service';
@@ -8,8 +8,10 @@ import { FunService } from './fun.service';
 })
 export class GlobalService {
 
-  constructor(private apiService: ApiService, private fun: FunService) {}
+  constructor(public apiService: ApiService, private fun: FunService,
+    @Inject(PLATFORM_ID) private _platformId: Object) {}
   request(formData: any, url: string) {
+    
     const req = this.apiService.http.post<any[]>(
       this.apiService.apiUrl + url,
       formData
