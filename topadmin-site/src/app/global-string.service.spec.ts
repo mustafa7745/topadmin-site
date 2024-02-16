@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { FunService } from './fun.service';
+import { GlobalStringService } from './global-string.service';
 
-describe('FunService', () => {
-  let service: FunService;
+describe('GlobalStringService', () => {
+  let service: GlobalStringService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(FunService);
+    service = TestBed.inject(GlobalStringService);
   });
 
   it('should be created', () => {

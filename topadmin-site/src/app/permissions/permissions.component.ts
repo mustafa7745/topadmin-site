@@ -1,8 +1,8 @@
-import { Component, inject } from '@angular/core';
+import { Component, Inject, PLATFORM_ID, inject } from '@angular/core';
 import {
   PermissionsService,
 } from '../services/permissions.service';
-import { CommonModule } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 
 @Component({
@@ -13,9 +13,13 @@ import { FormsModule } from '@angular/forms';
   styleUrl: './permissions.component.css',
 })
 export class PermissionsComponent {
-  constructor(public service: PermissionsService) { }
+  constructor(public service: PermissionsService,
+    @Inject(PLATFORM_ID) private _platformId: Object) { }
   ngOnInit() {
-    this.service.reset()
-    this.service.read()
+    if (isPlatformBrowser(this._platformId)) {
+      this.service.reset()
+      this.service.read()
+    }
+
   }
 }

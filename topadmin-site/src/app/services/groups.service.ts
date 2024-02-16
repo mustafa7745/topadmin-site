@@ -104,10 +104,10 @@ export class GroupsService{
       SEARCH: this.searchText,
       FROM: "0"
     });
-    var formData = this.loginService.getFormData();
+    var formData = this.globalService.getFormData();
     formData.set('data', data);
     //
-    this.globalService.request(formData, this.urlRead).subscribe({
+    this.globalService.request<Group>(formData, this.urlRead).subscribe({
       next: (response) => {
         if (response.length === 0) {
           this.emptySearchData = "No Data Found"
@@ -138,10 +138,10 @@ export class GroupsService{
       SEARCH: this.searchText,
       FROM: this.list.length
     });
-    var formData = this.loginService.getFormData();
+    var formData = this.globalService.getFormData();
     formData.set('data', data);
     //
-    this.globalService.request(formData, this.urlRead).subscribe({
+    this.globalService.request<Group>(formData, this.urlRead).subscribe({
       next: (response) => {
         this.list = this.list.concat(response);
         this.loadingSearchMore = false;
@@ -164,10 +164,10 @@ export class GroupsService{
     this.readError = ''
     this.loadingRead = true;
     const data = JSON.stringify({ TAG: 'READ', FROM: '0' });
-    var formData = this.loginService.getFormData();
+    var formData = this.globalService.getFormData();
     formData.set('data', data);
     //
-    this.globalService.request(formData, this.urlRead).subscribe({
+    this.globalService.request<Group>(formData, this.urlRead).subscribe({
       next: (response) => {
         this.list = response;
         this.loadingRead = false;
@@ -191,10 +191,10 @@ export class GroupsService{
     this.loadingReadMore = true;
     // 
     const data = JSON.stringify({ TAG: 'READ', FROM: this.list.length });
-    var formData = this.loginService.getFormData();
+    var formData = this.globalService.getFormData();
     formData.set('data', data);
     //
-    this.globalService.request(formData, this.urlRead).subscribe({
+    this.globalService.request<Group>(formData, this.urlRead).subscribe({
       next: (response) => {
         console.log(response);
         console.log(this.list.length);
@@ -237,7 +237,7 @@ export class GroupsService{
   // 
   add(name: string,modal:any){
     const data = JSON.stringify({ TAG: 'ADD', PERMISSION_NAME: name, });
-    var formData = this.loginService.getFormData();
+    var formData = this.globalService.getFormData();
     formData.set('data', data);
     // 
     const loadingModal = this.modalService.open(LoadingModal, {
@@ -275,7 +275,7 @@ export class GroupsService{
   // 
   updateName(name: string,id:string,modal:any){
     const data = JSON.stringify({ TAG: 'EDIT', ID:id, PERMISSION_NAME: name, });
-    var formData = this.loginService.getFormData();
+    var formData = this.globalService.getFormData();
     formData.set('data', data);
     // 
     const loadingModal = this.modalService.open(LoadingModal, {
@@ -344,7 +344,7 @@ export class GroupsService{
       }
 
     const data = JSON.stringify({ TAG: 'DELETE', IDS: ids });
-    var formData = this.loginService.getFormData();
+    var formData = this.globalService.getFormData();
     formData.set('data', data);
     // 
     const loadingModal = this.modalService.open(LoadingModal, {

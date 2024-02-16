@@ -1,26 +1,22 @@
-import { Injectable, inject } from '@angular/core';
-import { Observable } from 'rxjs';
-import { ApiService } from './api.service';
-import { App } from './apps.service';
+import { Inject, Injectable, PLATFORM_ID, inject } from '@angular/core';
 import { LoginService } from './login.service';
-import { FunService } from '../fun.service';
 import { GlobalService } from '../global.service';
 import { NgbModal } from '@ng-bootstrap/ng-bootstrap';
-import { ConfirmModal } from '../CBootstrap/modal/confirm/confirm-modal.component';
-import { LoadingModal } from '../CBootstrap/modal/loading/loading-modal.component';
-import { SuccessInfoModal } from '../CBootstrap/modal/success-info/successinfo-modal.component';
-import { ErrorInfoModal } from '../CBootstrap/modal/error-info/errorinfo-modal.component';
 import { ModalAddPermission } from '../permissions/add-permissions.component';
 import { ModalUpdatePermissionName } from '../permissions/update-permissions.component';
+import { GlobalStringService } from '../global-string.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class PermissionsService {
   constructor(
-    private loginService: LoginService,
-    private globalService: GlobalService
-  ) { }
+    private globalService: GlobalService,
+    private globalString: GlobalStringService,
+    @Inject(PLATFORM_ID) private _platformId: Object
+  ) {
+  }
+ 
   modalService = inject(NgbModal);
   // urls
   urlRead = 'user/permissions/read.php';
@@ -35,93 +31,91 @@ export class PermissionsService {
   loadingRead = false;
   loadingReadMore = false;
   loadingSearch = false;
-  loadingSearchMore = false
+  loadingSearchMore = false;
   //
   readError = '';
   readMoreError = '';
-  searchMoreError = ''
+  searchMoreError = '';
   searchError = '';
   //
-  isHaveReadMore = false
-  isHaveSearchMore = false
-  // 
+  isHaveReadMore = false;
+  isHaveSearchMore = false;
+  //
   statusRead = false;
   statusReadMore = false;
-  // 
-  searchMode = false
-  searchText = ''
-  emptySearchData = ''
+  //
+  searchMode = false;
+  searchText = '';
+  emptySearchData = '';
 
-  reset(){
-    this.permissions= []
-    this.selectedItems = []
-    // 
-    this.loadingRead = false
-    this.loadingReadMore =false
-    this.loadingSearch = false
-    this.loadingSearchMore = false
-    // 
+  reset() {
+    this.permissions = [];
+    this.selectedItems = [];
+    //
+    this.loadingRead = false;
+    this.loadingReadMore = false;
+    this.loadingSearch = false;
+    this.loadingSearchMore = false;
+    //
     this.readError = '';
     this.readMoreError = '';
-    this.searchMoreError = ''
+    this.searchMoreError = '';
     this.searchError = '';
-    // 
-    this.isHaveReadMore = false
-    this.isHaveSearchMore = false
-    // 
-    this.statusRead = false
-    this.statusReadMore = false
-    // 
-    this.searchMode = false
-    this.searchText = ''
+    //
+    this.isHaveReadMore = false;
+    this.isHaveSearchMore = false;
+    //
+    this.statusRead = false;
+    this.statusReadMore = false;
+    //
+    this.searchMode = false;
+    this.searchText = '';
   }
 
   isDisabledSearchButton() {
     return !(this.searchText.length > 0);
   }
   changeSearchMode(event: any) {
-    this.permissions = []
-    this.isHaveSearchMore = false
+    this.permissions = [];
+    this.isHaveSearchMore = false;
     this.searchMode = event.target.checked;
     if (event.target.checked) {
       this.searchText = '';
-      this.permissions = []
-    }
-    else {
-      this.read()
+      this.permissions = [];
+    } else {
+      this.read();
     }
   }
   //
   search() {
-    this.permissions = []
-    this.emptySearchData = ''
-    this.searchError = ''
+    this.permissions = [];
+    this.emptySearchData = '';
+    this.searchError = '';
     this.loadingSearch = true;
     this.isHaveSearchMore = false;
     const data = JSON.stringify({
       TAG: 'SEARCH',
       SEARCH_BY: 'NAME',
       SEARCH: this.searchText,
-      FROM: "0"
+      FROM: '0',
     });
-    var formData = this.loginService.getFormData();
-    formData.set('data', data);
+    var formData = this.globalService.getFormData();
+    formData.append('data3', data);
     //
-    this.globalService.request(formData, this.urlRead).subscribe({
+    this.globalService.request<Permission>(formData, this.urlRead).subscribe({
       next: (response) => {
         if (response.length === 0) {
-          this.emptySearchData = "No Data Found"
-        }else{
-          this.permissions = response;
-       
-        if (response.length == 3) {
-          this.isHaveSearchMore = true;
+          this.emptySearchData = 'No Data Found';
         } else {
-          this.isHaveSearchMore = false;
+          this.permissions = response;
+
+          if (response.length == 3) {
+            this.isHaveSearchMore = true;
+          } else {
+            this.isHaveSearchMore = false;
+          }
         }
-      
-        }
-         this.loadingSearch = false;
+        this.loadingSearch = false;
       },
       error: (err) => {
         this.searchError = this.globalService.errorMessage(err);
@@ -130,18 +124,18 @@ export class PermissionsService {
     });
   }
   searchMore() {
-    this.searchMoreError = ''
+    this.searchMoreError = '';
     this.loadingSearchMore = true;
     const data = JSON.stringify({
       TAG: 'SEARCH',
       SEARCH_BY: 'NAME',
       SEARCH: this.searchText,
-      FROM: this.permissions.length
+      FROM: this.permissions.length,
     });
-    var formData = this.loginService.getFormData();
+    var formData = this.globalService.getFormData();
     formData.set('data', data);
     //
-    this.globalService.request(formData, this.urlRead).subscribe({
+    this.globalService.request<Permission>(formData, this.urlRead).subscribe({
       next: (response) => {
         this.permissions = this.permissions.concat(response);
         this.loadingSearchMore = false;
@@ -157,17 +151,16 @@ export class PermissionsService {
         this.loadingSearchMore = false;
       },
     });
-
   }
-  // 
+  //
   read() {
-    this.readError = ''
+    this.readError = '';
     this.loadingRead = true;
-    const data = JSON.stringify({ TAG: 'READ', FROM: '0' });
-    var formData = this.loginService.getFormData();
-    formData.set('data', data);
+    const data = JSON.stringify({ tag: 'read', from: '0' });
+    var formData = this.globalService.getFormData();
+    formData.set('data3', data);
     //
-    this.globalService.request(formData, this.urlRead).subscribe({
+    this.globalService.request<Permission>(formData, this.urlRead).subscribe({
       next: (response) => {
         this.permissions = response;
         this.loadingRead = false;
@@ -187,14 +180,14 @@ export class PermissionsService {
     });
   }
   readMore() {
-    this.readMoreError = ''
+    this.readMoreError = '';
     this.loadingReadMore = true;
-    // 
-    const data = JSON.stringify({ TAG: 'READ', FROM: this.permissions.length });
-    var formData = this.loginService.getFormData();
-    formData.set('data', data);
     //
-    this.globalService.request(formData, this.urlRead).subscribe({
+    const data = JSON.stringify({ tag: 'read', from: this.permissions.length });
+    var formData = this.globalService.getFormData();
+    formData.set('data3', data);
+    //
+    this.globalService.request<Permission>(formData, this.urlRead).subscribe({
       next: (response) => {
         this.permissions = this.permissions.concat(response);
         this.loadingReadMore = false;
@@ -213,7 +206,7 @@ export class PermissionsService {
       },
     });
   }
-  // 
+  //
   selectItem(id: string) {
     const index = this.selectedItems.findIndex((el) => el === id);
     if (index > -1) {
@@ -230,137 +223,95 @@ export class PermissionsService {
       this.selectedItems = [];
     }
   }
-  // 
-  add(name: string,modal:any){
-    const data = JSON.stringify({ TAG: 'ADD', PERMISSION_NAME: name, });
-    var formData = this.loginService.getFormData();
-    formData.set('data', data);
-    // 
-    const loadingModal = this.modalService.open(LoadingModal, {
-      keyboard: false,
-      backdrop: 'static',
-      centered: true,
-    });
+  //
+  add(name: string, modal: any) {
+    const data = JSON.stringify({ tag: 'add', name: name });
+    var formData = this.globalService.getFormData();
+    formData.set('data3', data);
+    //
+    const loadingModal = this.globalService.loadingModal();
+    //
     this.globalService.request(formData, this.urlAdd).subscribe({
       next: (response) => {
-        loadingModal.close()
-        const successModal = this.modalService.open(SuccessInfoModal, {
-          keyboard: false,
-          backdrop: 'static',
-          centered: true,
-        });
-        successModal.componentInstance.result = "Add Done"
+        loadingModal.close();
+        this.globalService.successModal().componentInstance.result =
+          this.globalString.getSuccessAdd();
+        //
+        let x: Permission = JSON.parse(
+          response as unknown as string
+        ) as unknown as Permission;
+        this.permissions.unshift(x);
         modal.close();
-        console.log("mustafa");
-        
-        this.read()
       },
       error: (err) => {
-        const errorModal = this.modalService.open(ErrorInfoModal, {
-          keyboard: false,
-          backdrop: 'static',
-          centered: true,
-        });
-        errorModal.componentInstance.result = this.globalService.errorMessage(err);
-        loadingModal.close()
-       
-      
+        this.globalService.errorModal().componentInstance.result =
+          this.globalService.errorMessage(err);
+        loadingModal.close();
       },
     });
   }
-  // 
-  updateName(name: string,id:string,modal:any){
-    const data = JSON.stringify({ TAG: 'EDIT', ID:id, PERMISSION_NAME: name, });
-    var formData = this.loginService.getFormData();
-    formData.set('data', data);
-    // 
-    const loadingModal = this.modalService.open(LoadingModal, {
-      keyboard: false,
-      backdrop: 'static',
-      centered: true,
-    });
+  //
+  updateName(name: string, id: string, modal: any) {
+    const data = JSON.stringify({ tag: 'update', name: name, id: id });
+    var formData = this.globalService.getFormData();
+    formData.set('data3', data);
+    //
+    const loadingModal = this.globalService.loadingModal();
+    //
     this.globalService.request(formData, this.urlUpdate).subscribe({
       next: (response) => {
-        loadingModal.close()
-        const successModal = this.modalService.open(SuccessInfoModal, {
-          keyboard: false,
-          backdrop: 'static',
-          centered: true,
-        });
-        successModal.componentInstance.result = "Update Done"
+        loadingModal.close();
+        this.globalService.successModal().componentInstance.result =
+          this.globalString.getSuccessUpdate();
         modal.close();
-        
-          const index = this.permissions.findIndex(
-            (obj) => obj.permission_id === id
-          );
-          
-          if (index > -1) {
-            this.permissions[index].permission_name = name
-          }
-       
+        // 
+
+        //Start Update item in list
+        const index = this.permissions.findIndex(
+          (obj) => obj.permission_id === id
+        );
+        if (index > -1) {
+          this.permissions[index].permission_name = name;
+        }
+        //End Update item in list
       },
       error: (err) => {
-        const errorModal = this.modalService.open(ErrorInfoModal, {
-          keyboard: false,
-          backdrop: 'static',
-          centered: true,
-        });
-        errorModal.componentInstance.result = this.globalService.errorMessage(err);
-        loadingModal.close()
-       
-      
+        this.globalService.errorModal().componentInstance.result =
+          this.globalService.errorMessage(err);
+        loadingModal.close();
       },
     });
-  
   }
-  // 
+  //
   deletecConfirm() {
-    const a = this.modalService.open(ConfirmModal, {
-      keyboard: false,
-      backdrop: 'static',
-      centered: true,
-    });
-    a.componentInstance.title = "Are You Sure to Delete ("+this.selectedItems.length+") Items ?"
-
-    a.result.then(r => {
-      this.delete()
-      a.close()
-
-    }).catch(e => {
-      console.log("mustaaffff");
-      console.log(e);
-    })
-
+    const a = this.globalService.confirmModal()
+    a.componentInstance.title = this.globalString.getConfirmDeleteQuestion(this.permissions.length)
+      
+    a.result
+      .then((r) => {
+        this.delete();
+        a.close();
+      })
+      .catch((e) => {
+       this.selectedItems = []
+      });
   }
   delete() {
-    var emptyJson = '{}';
-      var ids = JSON.parse(emptyJson);
-      for (let index = 0; index < this.selectedItems.length; index++) {
-        ids[index + 1] = this.selectedItems[index].toString();
-      }
-
-    const data = JSON.stringify({ TAG: 'DELETE', IDS: ids });
-    var formData = this.loginService.getFormData();
-    formData.set('data', data);
+    var ids = this.globalService.ids(this.selectedItems);
     // 
-    const loadingModal = this.modalService.open(LoadingModal, {
-      keyboard: false,
-      backdrop: 'static',
-      centered: true,
-    });
-
-    loadingModal.componentInstance.title = "Deleting ... "
-
+    const data = JSON.stringify({ tag: 'delete', ids: ids });
+    var formData = this.globalService.getFormData();
+    formData.set('data3', data);
+    //
+    const loadingModal = this.globalService.loadingModal();
+    loadingModal.componentInstance.title = this.globalString.getDeleting();
+    // 
     this.globalService.request(formData, this.urlDelete).subscribe({
       next: (response) => {
-       
-        loadingModal.close()
-        const successModal = this.modalService.open(SuccessInfoModal, {
-          keyboard: false,
-          backdrop: 'static',
-          centered: true,
-        });
-        successModal.componentInstance.result = "Done DELETED"
+        loadingModal.close();
+        this.globalService.successModal().componentInstance.result =
+        this.globalString.getSuccessDelete();
+        // remove item from list
         this.selectedItems.forEach((element) => {
           const index = this.permissions.findIndex(
             (obj) => obj.permission_id === element
@@ -369,39 +320,32 @@ export class PermissionsService {
             this.permissions.splice(index, 1);
           }
         });
-        this.selectedItems = []
-       
+        this.selectedItems = [];
       },
       error: (err) => {
-        loadingModal.close();
-        const errorModal = this.modalService.open(ErrorInfoModal, {
-          keyboard: false,
-          backdrop: 'static',
-          centered: true,
-        });
-        errorModal.componentInstance.result = this.globalService.errorMessage(err);
+        this.globalService.errorModal().componentInstance.result =
+        this.globalService.errorMessage(err);
+      loadingModal.close();
       },
     });
-
   }
-  // 
-  openAddModal(){
+  //
+  openAddModal() {
     const a = this.modalService.open(ModalAddPermission, {
       keyboard: false,
       backdrop: 'static',
       centered: true,
     });
-
   }
-  openUpdateNameModal(id:string,name:string){
+  openUpdateNameModal(id: string, name: string) {
     const a = this.modalService.open(ModalUpdatePermissionName, {
       keyboard: false,
       backdrop: 'static',
       centered: true,
     });
     a.componentInstance.id = id;
-    a.componentInstance.preName = name
-    a.componentInstance.newName = name
+    a.componentInstance.preName = name;
+    a.componentInstance.newName = name;
   }
 }
 export interface Permission {

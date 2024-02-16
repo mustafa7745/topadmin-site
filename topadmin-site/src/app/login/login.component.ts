@@ -1,67 +1,91 @@
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Component,  EventEmitter, Inject, PLATFORM_ID } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
-import { ApiService } from '../services/api.service';
-import { Router } from '@angular/router';
+import { Component} from '@angular/core';
 import { LoginService } from '../services/login.service';
+import { GlobalService } from '../global.service';
 
 @Component({
   standalone: true,
   selector: 'app-login',
-  imports: [CommonModule,FormsModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
+  providers:[GlobalService]
 })
 export class LoginComponent {
-  error = ''
+  error = '';
   isLoading = false;
+  isLogined = true
 
   constructor(
-    @Inject(PLATFORM_ID) private _platformId: Object,
-    private http: HttpClient,
-    private router: Router,
-    private apiService: ApiService,
+    private globalService: GlobalService,
     private loginService:LoginService
-  ) { 
-   
-  }
+  ) {}
   ngOnInit() {
-     if (this.loginService.isLogin()) {
-      this.router.navigate(['/dashboard']);
-     }
-  }
-  
-  phone: string = '967';
-  password: string = '';
-
-  login() {
-    const phone = this.phone
-    const password = this.password
-    // 
-    this.isLoading = true
-    this.error = ''
-
-    this.loginService.checkUser(phone,password).subscribe({
-      next:(response)=>{
-        this.loginService.setLogin(phone,password)
-        this.router.navigate(['/dashboard']);
-      },
-      error:(err)=>{
-        if ( err.status === 400) {
-          this.error = err.error.message.ar
+    this.globalService.browserPlatform(() => {
+      if (this.globalService.getInitFromStorage() == null) {
+       this.globalService.navigateToHome()
+      } else {
+        if (this.globalService.isLogin()) {
+         this.globalService.navigateToDashboard()
         }
         else{
-          this.error = "UN Error"
+          this.isLogined = false
         }
-        this.isLoading=false
       }
-      ,
-      complete:()=>{
-        this.isLoading=false
-      }
-     })
+    });
   }
 
+  phone: string = '';
+  password: string = '';
+
+  validateInput(): boolean {
+    if (
+      this.phone.length == 9 &&
+      this.isNumber(this.phone) &&
+      this.password.length > 4 &&
+      !this.isLoading
+    ) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+  getPhone() {
+    const phone = this.phone;
+    return '967' + phone;
+  }
+
+  login() {
+    const password = this.password;
+    //
+    this.isLoading = true;
+    this.error = '';
+    // 
+    const data2 = { user_phone: this.getPhone(), user_password: password };
+    this.globalService.apiService.formData.append(
+      'data2',
+      JSON.stringify(data2)
+    );
+    // 
+
+    this.globalService.request( this.globalService.apiService.formData,this.loginService.urlLogin).subscribe({
+      next: () => {
+        this.loginService.setLogin(this.getPhone(), password);
+        this.globalService.navigateToDashboard()
+      },
+      error: (err) => {
+        this.error = this.globalService.errorMessage(err)
+        this.isLoading = false;
+      },
+      complete: () => {
+        this.isLoading = false;
+      },
+    });
+  }
  
+  
+  isNumber(value?: string | number): boolean {
+    return value != null && value !== '' && !isNaN(Number(value.toString()));
+  }
 }

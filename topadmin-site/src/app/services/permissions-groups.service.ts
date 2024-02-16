@@ -4,6 +4,7 @@ import { ApiService } from './api.service';
 import { LoginService } from './login.service';
 import { Group } from './groups.service';
 import { Permission } from './permissions.service';
+import { GlobalService } from '../global.service';
 
 @Injectable({
   providedIn: 'root'
@@ -14,10 +15,11 @@ export class PermissionsGroupsService {
   id:any
   constructor(
     private apiService: ApiService,
-    private loginService: LoginService
+    private globalService: GlobalService
+
   ) {
     // this.fm = new FormData();
-    const m = this.loginService.getFormData();
+    const m = this.globalService.getFormData();
     this.fm = m
   }
   read(): Observable<PermissionGroup[]> {

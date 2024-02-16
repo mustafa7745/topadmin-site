@@ -9,10 +9,10 @@ import { AppsComponent } from './apps/apps.component';
 import { PermissionsComponent } from './permissions/permissions.component';
 import { AppsGroupsComponent } from './apps-groups/apps-groups.component';
 import { PermissionsGroupsComponent } from './permissions-groups/permissions-groups.component';
+import { RsaComponent } from './rsa/rsa.component';
 
 export const routes: Routes = [
-  { path: 'init', component: InitComponent },
-  { path: '', redirectTo: 'init', pathMatch: 'full' },
+  { path: '', component: InitComponent },
   { path: 'login', component: LoginComponent },
   {
     path: 'dashboard',
@@ -22,6 +22,8 @@ export const routes: Routes = [
        
       ]},
       { path: 'permissions', component: PermissionsComponent },
+      { path: 'rsa', component: RsaComponent },
+
       // { path: 'apps/:id', component: AppsComponent },
       { path: 'apps', component: AppsComponent },
       {path: 'groups/apps-group', component: AppsGroupsComponent},

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { ApiService } from './api.service';
 import { Observable } from 'rxjs';
 import { LoginService } from './login.service';
+import { GlobalService } from '../global.service';
 
 @Injectable({
   providedIn: 'root',
@@ -13,10 +14,10 @@ export class AppsService {
 
   constructor(
     private apiService: ApiService,
-    private loginService: LoginService
+    private globalService: GlobalService
   ) {
     this.formData = new FormData();
-    this.formData = this.loginService.getFormData();
+    this.formData = this.globalService.getFormData();
   }
 
   read(): Observable<App[]> {

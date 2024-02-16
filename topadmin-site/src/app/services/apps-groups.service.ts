@@ -4,6 +4,7 @@ import { App } from './apps.service';
 import { ApiService } from './api.service';
 import { LoginService } from './login.service';
 import { Observable } from 'rxjs';
+import { GlobalService } from '../global.service';
 
 @Injectable({
   providedIn: 'root',
@@ -13,10 +14,11 @@ export class AppsGroupsService {
   id:any
   constructor(
     private apiService: ApiService,
-    private loginService: LoginService
+    private globalService: GlobalService
+
   ) {
     this.formData = new FormData();
-    this.formData = this.loginService.getFormData();
+    this.formData = this.globalService.getFormData();
   }
   read(): Observable<AppsGroups[]> {
     this.formData.append("id",this.id)

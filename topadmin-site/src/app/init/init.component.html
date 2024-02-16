@@ -1,3 +1,3 @@
 <div *ngIf="isLoading; then thenBlock else elseBlock"></div>
 <ng-template #thenBlock>Loading...</ng-template>
-<ng-template #elseBlock>{{data}}</ng-template>
+<ng-template #elseBlock>{{error}}</ng-template>
