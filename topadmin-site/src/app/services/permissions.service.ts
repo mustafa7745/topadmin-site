@@ -22,7 +22,7 @@ export class PermissionsService {
   urlRead = 'user/permissions/read.php';
   urlAdd = 'user/permissions/add.php';
   urlDelete = 'user/permissions/delete.php';
-  urlUpdate = 'user/permissions/edit.php';
+  urlUpdate = 'user/permissions/update.php';
   // list
   permissions: Permission[] = [];
   selectedItems: string[] = [];
@@ -94,10 +94,10 @@ export class PermissionsService {
     this.loadingSearch = true;
     this.isHaveSearchMore = false;
     const data = JSON.stringify({
-      TAG: 'SEARCH',
-      SEARCH_BY: 'NAME',
-      SEARCH: this.searchText,
-      FROM: '0',
+      tag: 'search',
+      searchBy: 'name',
+      search: this.searchText,
+      from: '0',
     });
     var formData = this.globalService.getFormData();
     formData.append('data3', data);
@@ -127,13 +127,13 @@ export class PermissionsService {
     this.searchMoreError = '';
     this.loadingSearchMore = true;
     const data = JSON.stringify({
-      TAG: 'SEARCH',
-      SEARCH_BY: 'NAME',
-      SEARCH: this.searchText,
-      FROM: this.permissions.length,
+      tag: 'search',
+      searchBy: 'name',
+      search: this.searchText,
+      from: this.permissions.length,
     });
     var formData = this.globalService.getFormData();
-    formData.set('data', data);
+    formData.set('data3', data);
     //
     this.globalService.request<Permission>(formData, this.urlRead).subscribe({
       next: (response) => {
@@ -208,6 +208,8 @@ export class PermissionsService {
   }
   //
   selectItem(id: string) {
+    console.log(this.selectedItems.length);
+    
     const index = this.selectedItems.findIndex((el) => el === id);
     if (index > -1) {
       this.selectedItems.splice(index, 1);
@@ -237,9 +239,7 @@ export class PermissionsService {
         this.globalService.successModal().componentInstance.result =
           this.globalString.getSuccessAdd();
         //
-        let x: Permission = JSON.parse(
-          response as unknown as string
-        ) as unknown as Permission;
+        let x: Permission = response as unknown as Permission;
         this.permissions.unshift(x);
         modal.close();
       },
@@ -285,7 +285,7 @@ export class PermissionsService {
   //
   deletecConfirm() {
     const a = this.globalService.confirmModal()
-    a.componentInstance.title = this.globalString.getConfirmDeleteQuestion(this.permissions.length)
+    a.componentInstance.title = this.globalString.getConfirmDeleteQuestion(this.selectedItems.length)
       
     a.result
       .then((r) => {
