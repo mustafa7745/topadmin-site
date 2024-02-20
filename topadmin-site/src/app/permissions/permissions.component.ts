@@ -4,6 +4,7 @@ import {
 } from '../services/permissions.service';
 import { CommonModule, isPlatformBrowser } from '@angular/common';
 import { FormsModule } from '@angular/forms';
+import { ModalAddPermission } from './add-permissions.component';
 
 @Component({
   selector: 'app-permissions',

@@ -7,7 +7,7 @@ import { PermissionsService } from "../services/permissions.service";
 @Component({
   selector: 'ngbd-modal-add-permission',
   standalone: true,
-  imports: [NgbDropdownModule, CommonModule, FormsModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: "./add-permissions.component.html"
   
 })

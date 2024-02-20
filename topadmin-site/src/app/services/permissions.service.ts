@@ -24,7 +24,7 @@ export class PermissionsService {
   urlDelete = 'user/permissions/delete.php';
   urlUpdate = 'user/permissions/update.php';
   // list
-  permissions: Permission[] = [];
+  list: Permission[] = [];
   selectedItems: string[] = [];
   // search
   //
@@ -49,7 +49,7 @@ export class PermissionsService {
   emptySearchData = '';
 
   reset() {
-    this.permissions = [];
+    this.list = [];
     this.selectedItems = [];
     //
     this.loadingRead = false;
@@ -76,19 +76,19 @@ export class PermissionsService {
     return !(this.searchText.length > 0);
   }
   changeSearchMode(event: any) {
-    this.permissions = [];
+    this.list = [];
     this.isHaveSearchMore = false;
     this.searchMode = event.target.checked;
     if (event.target.checked) {
       this.searchText = '';
-      this.permissions = [];
+      this.list = [];
     } else {
       this.read();
     }
   }
   //
   search() {
-    this.permissions = [];
+    this.list = [];
     this.emptySearchData = '';
     this.searchError = '';
     this.loadingSearch = true;
@@ -107,7 +107,7 @@ export class PermissionsService {
         if (response.length === 0) {
           this.emptySearchData = 'No Data Found';
         } else {
-          this.permissions = response;
+          this.list = response;
 
           if (response.length == 3) {
             this.isHaveSearchMore = true;
@@ -130,14 +130,14 @@ export class PermissionsService {
       tag: 'search',
       searchBy: 'name',
       search: this.searchText,
-      from: this.permissions.length,
+      from: this.list.length,
     });
     var formData = this.globalService.getFormData();
     formData.set('data3', data);
     //
     this.globalService.request<Permission>(formData, this.urlRead).subscribe({
       next: (response) => {
-        this.permissions = this.permissions.concat(response);
+        this.list = this.list.concat(response);
         this.loadingSearchMore = false;
         if (response.length == 3) {
           this.isHaveSearchMore = true;
@@ -162,7 +162,7 @@ export class PermissionsService {
     //
     this.globalService.request<Permission>(formData, this.urlRead).subscribe({
       next: (response) => {
-        this.permissions = response;
+        this.list = response;
         this.loadingRead = false;
         this.statusRead = true;
         if (response.length == 3) {
@@ -183,13 +183,13 @@ export class PermissionsService {
     this.readMoreError = '';
     this.loadingReadMore = true;
     //
-    const data = JSON.stringify({ tag: 'read', from: this.permissions.length });
+    const data = JSON.stringify({ tag: 'read', from: this.list.length });
     var formData = this.globalService.getFormData();
     formData.set('data3', data);
     //
     this.globalService.request<Permission>(formData, this.urlRead).subscribe({
       next: (response) => {
-        this.permissions = this.permissions.concat(response);
+        this.list = this.list.concat(response);
         this.loadingReadMore = false;
         this.statusReadMore = true;
         if (response.length == 3) {
@@ -218,7 +218,7 @@ export class PermissionsService {
   onSelectAll(event: any) {
     if (event.target.checked) {
       this.selectedItems = [];
-      this.permissions.forEach((e) => {
+      this.list.forEach((e) => {
         this.selectedItems.push(e.permission_id);
       });
     } else {
@@ -240,7 +240,7 @@ export class PermissionsService {
           this.globalString.getSuccessAdd();
         //
         let x: Permission = response as unknown as Permission;
-        this.permissions.unshift(x);
+        this.list.unshift(x);
         modal.close();
       },
       error: (err) => {
@@ -267,11 +267,11 @@ export class PermissionsService {
         // 
 
         //Start Update item in list
-        const index = this.permissions.findIndex(
+        const index = this.list.findIndex(
           (obj) => obj.permission_id === id
         );
         if (index > -1) {
-          this.permissions[index].permission_name = name;
+          this.list[index].permission_name = name;
         }
         //End Update item in list
       },
@@ -313,11 +313,11 @@ export class PermissionsService {
         this.globalString.getSuccessDelete();
         // remove item from list
         this.selectedItems.forEach((element) => {
-          const index = this.permissions.findIndex(
+          const index = this.list.findIndex(
             (obj) => obj.permission_id === element
           );
           if (index > -1) {
-            this.permissions.splice(index, 1);
+            this.list.splice(index, 1);
           }
         });
         this.selectedItems = [];

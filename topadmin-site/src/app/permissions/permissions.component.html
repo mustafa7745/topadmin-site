@@ -55,7 +55,7 @@
           <th scope="col">Updated At</th>
           <th *ngIf="service.selectedItems.length > 0" scope="col">
             <input class="form-check-input" type="checkbox" value="" id="flexCheckChecked" [checked]="
-                service.selectedItems.length == service.permissions.length
+                service.selectedItems.length == service.list.length
               " (change)="service.onSelectAll($event)" />
             <span> {{ service.selectedItems.length }}</span>
           </th>
@@ -63,13 +63,13 @@
       </thead>
       <tbody>
         <div *ngIf="
-            service.permissions.length == 0;
+            service.list.length == 0;
             then thenBlock;
             else elseBlock
           "></div>
         <ng-template #thenBlock>..</ng-template>
         <ng-template #elseBlock>
-          <ng-template ngFor let-item [ngForOf]="service.permissions" let-c="index">
+          <ng-template ngFor let-item [ngForOf]="service.list" let-c="index">
             <tr >
               <th (click)="service.selectItem(item.permission_id)" style="cursor: pointer;" scope="row">{{ c + 1 }}</th>
               <td>
